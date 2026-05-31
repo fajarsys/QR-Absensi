@@ -1,0 +1,33 @@
+name: Deploy to Proxmox
+
+on:
+  push:
+    branches:
+      - main # Workflow berjalan setiap kali Anda melakukan push ke branch main
+
+jobs:
+  deploy:
+    runs-on: self-hosted # Menginstruksikan GitHub untuk mengeksekusi ini di server Proxmox Anda
+
+    steps:
+      - name: Eksekusi Deployment
+        run: |
+          cd /opt/QR-Absensi
+          
+          # 1. Tarik pembaruan kode terbaru
+          git pull origin main
+          
+          # 2. Instal dependensi vendor baru (jika ada) tanpa meminta konfirmasi
+          docker exec absensi_app composer install --no-interaction --prefer-dist --optimize-autoloader
+          
+          # 3. Kompilasi asset frontend (Vite/Tailwind) di dalam container
+          docker exec absensi_app su -s /bin/bash www-data -c "npm install && npm run build"
+          
+          # 4. Eksekusi migrasi database (jika ada tabel baru) secara paksa
+          docker exec absensi_app php artisan migrate --force
+          
+          # 5. Bersihkan seluruh cache sistem
+          docker exec absensi_app php artisan optimize:clear
+          
+          # 6. Restart daemon WebSocket (Reverb) agar menggunakan kode terbaru
+          docker exec absensi_app php artisan reverb:restart
