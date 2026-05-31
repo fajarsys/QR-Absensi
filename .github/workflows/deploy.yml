@@ -17,17 +17,20 @@ jobs:
           # 1. Tarik pembaruan kode terbaru
           git pull origin main
           
-          # 2. Instal dependensi vendor baru (jika ada) tanpa meminta konfirmasi
+          # 2. Perbaiki hak akses file ke user web (Krusial agar NPM bisa menulis)
+          docker exec absensi_app chown -R www-data:www-data /var/www/html
+          
+          # 3. Instal dependensi vendor baru
           docker exec absensi_app composer install --no-interaction --prefer-dist --optimize-autoloader
-        
-          # 3. Kompilasi asset frontend (Vite/Tailwind) di dalam container
+          
+          # 4. Kompilasi asset frontend (Vite/Tailwind) di dalam container
           docker exec -u www-data absensi_app bash -c "npm install && npm run build"
-
-          # 4. Eksekusi migrasi database (jika ada tabel baru) secara paksa
+          
+          # 5. Eksekusi migrasi database secara paksa
           docker exec absensi_app php artisan migrate --force
           
-          # 5. Bersihkan seluruh cache sistem
+          # 6. Bersihkan seluruh cache sistem
           docker exec absensi_app php artisan optimize:clear
           
-          # 6. Restart daemon WebSocket (Reverb) agar menggunakan kode terbaru
+          # 7. Restart daemon WebSocket (Reverb)
           docker exec absensi_app php artisan reverb:restart
