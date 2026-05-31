@@ -1,0 +1,71 @@
+
+    /* Pengaturan Dasar Halaman */
+body { 
+    background-color: #f8f9fa; /* Warna latar sedikit abu di layar agar kertas terlihat jelas */
+    color: #000; 
+    font-family: 'Times New Roman', Times, serif; 
+        line-height: 1.5;
+}
+
+/* Area Kertas (Membentuk tampilan seperti kertas A4 di layar komputer) */
+.container-cetak {
+    max-width: 210mm; 
+    margin: 30px auto;
+    padding: 40px;
+    background-color: #fff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Kop Surat Resmi (Garis bawah ganda) */
+.kop-surat { 
+    border-bottom: 4px double #000; 
+    margin-bottom: 25px; 
+    padding-bottom: 15px; 
+    text-align: center;
+}
+
+/* Desain Tabel */
+table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 25px; 
+}
+
+th, td { 
+    border: 1px solid #333; 
+    padding: 10px 8px; /* Ruang bernapas di dalam sel tabel */
+    text-align: center; 
+    vertical-align: middle; /* Memastikan teks persis di tengah atas-bawah */
+    font-size: 14px; 
+}
+
+th { 
+    background-color: #e2e8f0 !important; /* Warna header abu-abu elegan */
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    -webkit-print-color-adjust: exact; /* WAJIB: Agar warna header ikut tercetak */
+    print-color-adjust: exact;
+}
+
+/* Efek Zebra (Belang-belang) pada baris tabel agar mudah dibaca */
+tbody tr:nth-child(even) {
+    background-color: #f8fafc !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+/* Pengaturan Khusus Saat Printer Berjalan */
+@media print {
+    body { background-color: #fff; }
+
+/* Hilangkan abu-abu di luar kertas */
+.container-cetak {
+    margin: 0;
+    padding: 0;
+    box-shadow: none; /* Hilangkan bayangan saat dicetak */
+    max-width: 100%;
+    }
+.btn-print { display: none !important; } /* Sembunyikan tombol cetak */
+ }
