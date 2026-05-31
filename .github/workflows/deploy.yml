@@ -21,7 +21,8 @@ jobs:
           docker exec absensi_app composer install --no-interaction --prefer-dist --optimize-autoloader
           
           # 3. Kompilasi asset frontend (Vite/Tailwind) di dalam container
-          docker exec absensi_app su -s /bin/bash www-data -c "npm install && npm run build"
+          # 3. Kompilasi asset frontend (Vite/Tailwind) di dalam container
+          docker exec -u www-data absensi_app bash -c "npm install && npm run build"
           
           # 4. Eksekusi migrasi database (jika ada tabel baru) secara paksa
           docker exec absensi_app php artisan migrate --force
