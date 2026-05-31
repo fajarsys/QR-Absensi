@@ -18,7 +18,7 @@ jobs:
           git pull origin main
           
           # 2. Perbaiki hak akses file ke user web (Krusial agar NPM bisa menulis)
-          docker exec absensi_app chown -R www-data:www-data /var/www/html
+          docker exec -u root absensi_app chown -R www-data:www-data /var/www/html
           
           # 3. Instal dependensi vendor baru
           docker exec absensi_app composer install --no-interaction --prefer-dist --optimize-autoloader
