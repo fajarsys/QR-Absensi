@@ -20,6 +20,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\PreventBackHistory::class,
         ]);
+
+        // Menerima semua header proxy (untuk Cloudflare Tunnel / HTTPS)
+        $middleware->trustProxies(at: '*');
+        
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
