@@ -8,7 +8,7 @@
         </div>
         <div class="card-body p-4">
             
-            <form action="{{ route('profile.update', $user->id) }}" method="POST">
+            <form action="{{ route('profile.update') }}" method="POST">
                 @csrf
                 @method('PUT') <div class="mb-3">
                     <label class="form-label text-muted fw-bold">Nama Lengkap</label>

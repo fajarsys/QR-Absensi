@@ -67,18 +67,19 @@ class UserController extends Controller
     //Menghapus pengguna
     public function adminDestroy($id)
     {
+        if (\Illuminate\Support\Facades\Auth::id() == $id) {
+            return redirect()->back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+        }
+
         $user = User::findOrFail($id);
         $user->delete();
         return redirect()->route('admin.users.adminIndex')->with('success', 'User berhasil dihapus');
     }
 
     // Menyimpan pengguna baru
-    public function store(NewUseerRequest $request)
+    public function store(NewUseerRequest $request, UserService $service)
     {
-        $data = $request->validated();
-        
-        $data['password'] = bcrypt($data['password']);
-        User::create($data);
+        $service->createUser($request->validated());
         return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan');
     }
 

@@ -22,7 +22,7 @@ Route::middleware('guest')->group(function () {
 
 // 2. ZONA MEMBER (SUDAH LOGIN)
 Route::middleware('auth')->group(function () {
-    
+
     //FITUR UMUM KARYAWAN
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
     // Profil
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::get('/profil/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profil/update{id}', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profil/update', [ProfileController::class, 'update'])->name('profile.update');
 
     //jalur izin 
     route::get('/izin', [LeaveController::class, 'index'])->name('izin.index');
@@ -42,20 +42,22 @@ Route::middleware('auth')->group(function () {
 
     // Jadwal Karyawan
     Route::get('/jadwal', [ScheduleController::class, 'index'])->name('schedule.index');
-    
+
     // History
 
-  
+
     // 3. ZONA KHUSUS ADMIN (VIP)
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
-        
+
         // URL: /admin/dashboard | Name: admin.dashboard
-        Route::get('/dashboard', function () { return view('admin.dashboard'); })->name('dashboard');
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
 
         // URL: /admin/office | Name: admin.office
         Route::get('/office', [OfficeController::class, 'index'])->name('office');
         Route::put('/office/{id}', [OfficeController::class, 'update'])->name('office.update');
-            
+
         //jalur jadwal
         Route::get('/jadwal', [ScheduleController::class, 'adminIndex'])->name('schedule');
         Route::post('/jadwal/import', [ScheduleController::class, 'importExcel'])->name('schedule.import');
@@ -64,7 +66,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/jadwal/{id}', [ScheduleController::class, 'destroy'])->name('schedule.destroy');
         Route::delete('/schedule/hapus-bulanan', [ScheduleController::class, 'destroyMonth'])->name('schedule.destroyMonth');
         Route::put('/jadwal/{id}', [ScheduleController::class, 'adminUpdate'])->name('schedule.adminUpdate');
-        
+
         //kelola izin 
         Route::get('/izin', [LeaveController::class, 'adminIndex'])->name('izin.adminIndex');
         Route::post('/izin/{id}/status', [LeaveController::class, 'approve'])->name('izin.approve');
@@ -85,6 +87,6 @@ Route::middleware('auth')->group(function () {
         //jalur asisten ai
         // Route::get('/ai-chat', [AiController::class, 'index'])->name('ai.index');
         // Route::post('/ai-chat/send', [AiController::class, 'sendChat'])->name('ai.chat.send');
-    
+
     });
 });

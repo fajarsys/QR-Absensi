@@ -22,11 +22,9 @@ class UpdateProfileRequest extends FormRequest
      */
     public function rules(): array
     {
-        $userId = $this->route('id');
-
         return [
             'name'  => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $userId,
+            'email' => 'required|email|max:255|unique:users,email,' . \Illuminate\Support\Facades\Auth::id(),
             'password' => 'nullable|min:8',
         ];
     }
