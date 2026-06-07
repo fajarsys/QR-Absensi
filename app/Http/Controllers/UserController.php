@@ -8,6 +8,7 @@ use App\Http\Requests\UserRequest;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -26,54 +27,65 @@ class UserController extends Controller
     }
 
     //menyimpan data users di admin 
-    public function adminStore(UserRequest $request, UserService $service) {
-        
+    public function adminStore(UserRequest $request, UserService $service)
+    {
+
         $service->createUser($request->validated());
 
         return redirect()->route('admin.users.adminIndex')
-                         ->with('success', 'Karyawan baru berhasil ditambahkan.');
-
+            ->with('success', 'Karyawan baru berhasil ditambahkan.');
     }
 
     /**
      * Prints the user details.
      * @param int $id
-    */
+     */
     //edit pengguna
-    public function adminEdit($id) {
+    public function adminEdit($id)
+    {
         $user = User::findOrfail($id);
-        return view('admin.data_karyawan.edit', compact ('user'));
+        return view('admin.data_karyawan.edit', compact('user'));
     }
 
     /**
      * Prints the user details.
      * @param int $id
-    */
+     */
     //update pengguna
-    public function adminUpdate(UpdateUserRequest $request, UserService $service, $id) {
+    public function adminUpdate(UpdateUserRequest $request, UserService $service, $id)
+    {
         $user = User::findOrfail($id);
-        
+
         $service->updateUser($user, $request->validated());
 
         return redirect()->route('admin.users.adminIndex')
-                         ->with('success', 'Data karyawan berhasil diperbarui.');
-    
+            ->with('success', 'Data karyawan berhasil diperbarui.');
     }
 
     /**
      * Prints the user details.
      * @param int $id
-    */
+     */
     //Menghapus pengguna
     public function adminDestroy($id)
     {
-        if (\Illuminate\Support\Facades\Auth::id() == $id) {
+        if (Auth::id() == $id) {
             return redirect()->back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
 
         $user = User::findOrFail($id);
         $user->delete();
         return redirect()->route('admin.users.adminIndex')->with('success', 'User berhasil dihapus');
+    }
+
+    // Reset Device ID Karyawan
+    public function resetDevice($id)
+    {
+        $user = User::findOrFail($id);
+        $user->device_id = null;
+        $user->save();
+
+        return redirect()->back()->with('success', "Perangkat untuk karyawan {$user->name} berhasil di-reset.");
     }
 
     // Menyimpan pengguna baru
@@ -86,7 +98,7 @@ class UserController extends Controller
     /**
      * Prints the user details.
      * @param int $id
-    */
+     */
     // Menampilkan profil satu pengguna
     public function show($id)
     {
@@ -97,7 +109,7 @@ class UserController extends Controller
     /**
      * Prints the user details.
      * @param int $id
-    */
+     */
     // Menampilkan form edit
     public function edit($id)
     {
@@ -108,18 +120,17 @@ class UserController extends Controller
     /**
      * Prints the user details.
      * @param int $id
-    */
+     */
     // Memperbarui data pengguna
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,'.$user->id,
+            'email' => 'required|email|unique:users,email,' . $user->id,
         ]);
-        
+
         $user->update($data);
         return redirect()->route('users.index')->with('success', 'User berhasil diupdate');
     }
-    
 }

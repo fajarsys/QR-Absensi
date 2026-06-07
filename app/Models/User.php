@@ -23,11 +23,12 @@ class User extends Authenticatable
         'password',
         'role',
         'jabatan',
+        'device_id'
     ];
 
     public function attendances()
     {
-    return $this->hasMany(Attendance::class);
+        return $this->hasMany(Attendance::class);
     }
 
     /**

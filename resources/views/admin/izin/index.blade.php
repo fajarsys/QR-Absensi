@@ -63,12 +63,12 @@
                             @endif
                         </td>
                         <td class="text-center pe-4">
-                            @if($leave->status == 'pending')
-                                <div class="d-flex justify-content-center gap-2">
+                            <div class="d-flex justify-content-center gap-2 align-items-center">
+                                @if($leave->status == 'pending')
                                     <form action="{{ route('admin.izin.approve', $leave->id) }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="status" value="approved">
-                                        <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Setujui pengajuan ini dan masukkan ke data absensi?')">
+                                        <button type="submit" class="btn btn-sm btn-success" title="Setujui" onclick="return confirm('Setujui pengajuan ini dan masukkan ke data absensi?')">
                                             <i class="bi bi-check-lg"></i>
                                         </button>
                                     </form>
@@ -76,14 +76,22 @@
                                     <form action="{{ route('admin.izin.approve', $leave->id) }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="status" value="rejected">
-                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tolak pengajuan ini?')">
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Tolak" onclick="return confirm('Tolak pengajuan ini?')">
                                             <i class="bi bi-x-lg"></i>
                                         </button>
                                     </form>
-                                </div>
-                            @else
-                                <i class="bi bi-lock text-muted" title="Sudah diproses"></i>
-                            @endif
+                                @else
+                                    <i class="bi bi-lock text-muted me-1" title="Sudah diproses"></i>
+                                @endif
+
+                                <form action="{{ route('admin.izin.destroy', $leave->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus Data" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini beserta dokumen unggahannya?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     @empty
@@ -139,19 +147,26 @@
                         <td>${dokumenHtml}</td>
                         <td><span class="badge bg-secondary">Menunggu</span></td>
                         <td class="text-center pe-4">
-                            <div class="d-flex justify-content-center gap-2">
+                            <div class="d-flex justify-content-center gap-2 align-items-center">
                                 <form action="/admin/izin/${data.izin.id}/approve" method="POST">
                                     <input type="hidden" name="_token" value="${csrfToken}">
                                     <input type="hidden" name="status" value="approved">
-                                    <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Setujui pengajuan ini dan masukkan ke data absensi?')">
+                                    <button type="submit" class="btn btn-sm btn-success" title="Setujui" onclick="return confirm('Setujui pengajuan ini dan masukkan ke data absensi?')">
                                         <i class="bi bi-check-lg"></i>
                                     </button>
                                 </form>
                                 <form action="/admin/izin/${data.izin.id}/approve" method="POST">
                                     <input type="hidden" name="_token" value="${csrfToken}">
                                     <input type="hidden" name="status" value="rejected">
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tolak pengajuan ini?')">
+                                    <button type="submit" class="btn btn-sm btn-danger" title="Tolak" onclick="return confirm('Tolak pengajuan ini?')">
                                         <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </form>
+                                <form action="/admin/izin/${data.izin.id}" method="POST">
+                                    <input type="hidden" name="_token" value="${csrfToken}">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus Data" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini beserta dokumen unggahannya?')">
+                                        <i class="bi bi-trash"></i>
                                     </button>
                                 </form>
                             </div>

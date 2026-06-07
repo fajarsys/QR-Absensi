@@ -67,6 +67,15 @@
                                     <i class="bi bi-trash"></i>
                                 </button>
                                 @endif
+
+                                @if ($user->role !== 'admin')
+                                <form action="{{ route('admin.users.resetDevice', $user->id) }}" method="POST" onsubmit="return confirm('Reset pengikatan perangkat untuk karyawan ini? Karyawan akan diminta login ulang di HP mereka.')">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-outline-info" title="Reset Perangkat">
+                                        <i class="bi bi-phone-vibrate"></i>
+                                    </button>
+                                </form>
+                                @endif
                             </div>
                         </td>
                     </tr>

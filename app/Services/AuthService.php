@@ -1,24 +1,41 @@
 <?php
 
 namespace App\Services;
+
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class AuthService
 {
-    /**
-     * Create a new class instance.
-     */
     public function authenticate(array $credentials): array
     {
         if (auth::attempt($credentials)) {
-            $role=Auth::user()->role;
-            $route = $role === 'admin' ? 'admin.dashboard' : 'dashboard' ;
-            
+            $user = Auth::user();
+            $role = $user->role;
+            $route = $role === 'admin' ? 'admin.dashboard' : 'dashboard';
+
+            $deviceIdToCookie = null;
+
+            // Fitur Kunci Perangkat hanya berlaku untuk karyawan (bukan admin)
+            if ($role !== 'admin') {
+                // Jika di DB belum terkunci, buat UUID baru untuk dikunci
+                if (is_null($user->device_id)) {
+                    $newDeviceId = (string) Str::uuid();
+                    $user->device_id = $newDeviceId;
+                    $user->save();
+
+                    // Kirim token ini agar Controller tahu harus menanam cookie baru
+                    $deviceIdToCookie = $newDeviceId;
+                }
+            }
+
             return [
                 'success' => true,
-                'redirect' => $route
+                'redirect' => $route,
+                'device_id' => $deviceIdToCookie // Berisi UUID baru atau null
             ];
         }
+
         return [
             'success' => false
         ];

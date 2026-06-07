@@ -50,4 +50,14 @@ class LeaveController extends Controller
 
         return redirect()->back()->with('success', 'Status pengajuan izin berhasil diperbarui.');
     }
+
+    /**
+     * Prints the user details.
+     * @param int|string $id The ID of the user.
+     */
+    public function destroy($id, LeaveService $service)
+    {
+        $service->deleteLeave($id);
+        return redirect()->back()->with('success', 'Data izin beserta dokumennya berhasil dihapus.');
+    }
 }

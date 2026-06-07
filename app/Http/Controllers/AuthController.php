@@ -18,13 +18,24 @@ class AuthController extends Controller
     // 2. Proses Login
     public function login(AuthloginRequest $request, AuthService $service)
     {
+        // 1. Jalankan proses autentikasi via Service
         $hasil = $service->authenticate($request->validated());
 
         if ($hasil['success']) {
             $request->session()->regenerate();
 
-            return redirect()->route($hasil['redirect']);
+            // 2. Siapkan object redirect ke route tujuannya
+            $response = redirect()->route($hasil['redirect']);
+
+            // 3. JIKA service menginstruksikan untuk menanam cookie baru (karyawan baru)
+            if (!empty($hasil['device_id'])) {
+                // Tanam cookie 'device_id' dengan masa aktif 1 tahun (525600 menit)
+                $response->withCookie(cookie('device_id', $hasil['device_id'], 525600));
+            }
+
+            return $response;
         }
+
         return back()->withErrors([
             'email' => 'Email atau password salah.',
         ])->onlyInput('email');

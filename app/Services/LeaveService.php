@@ -6,6 +6,7 @@ use App\Models\Leave;
 use App\Models\Attendance;
 use App\Events\IzinDiajukan;
 use Carbon\CarbonPeriod;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\UploadedFile;
 
@@ -19,7 +20,7 @@ class LeaveService
     /**
      * Prints the user details.
      * @param int|string $userId The ID of the user.
-    */
+     */
     public function getLeavesByUser($userId)
     {
         return Leave::where('user_id', $userId)->latest()->get();
@@ -56,16 +57,16 @@ class LeaveService
 
             if ($status === 'approved') {
                 $period = CarbonPeriod::create($leave->start_date, $leave->end_date);
-                
+
                 foreach ($period as $date) {
                     Attendance::updateOrCreate(
                         [
-                            'user_id' => $leave->user_id, 
+                            'user_id' => $leave->user_id,
                             'date' => $date->format('Y-m-d')
                         ],
                         [
-                            'status' => $leave->type, 
-                            'clock_in' => '00:00:00',  
+                            'status' => $leave->type,
+                            'clock_in' => '00:00:00',
                             'clock_out' => '00:00:00',
                             'notes' => 'Disetujui otomatis: ' . $leave->reason
                         ]
@@ -75,5 +76,17 @@ class LeaveService
 
             return $leave;
         });
+    }
+
+    public function deleteLeave(int $leaveId)
+    {
+        $leave = Leave::findOrFail($leaveId);
+
+        // Hapus file dokumen jika ada di storage
+        if ($leave->attachment) {
+            Storage::disk('public')->delete($leave->attachment);
+        }
+
+        return $leave->delete();
     }
 }
