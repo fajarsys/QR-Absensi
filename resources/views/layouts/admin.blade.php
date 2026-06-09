@@ -128,6 +128,30 @@
                 if (isAudioAllowed) {
                     audioFile.cloneNode().play().catch(e => console.warn("Audio diblokir:", e));
                 }
+            })
+        // 5. Listener Lembur Reverb
+            .listen('.lembur.baru', (data) => {
+                const newNotif = document.createElement('div');
+                newNotif.className = 'alert alert-warning alert-dismissible fade show shadow-sm border-start border-4 border-warning mb-0';
+                newNotif.style = 'min-width: 300px;';
+                
+                newNotif.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-clock-history me-3 fs-4"></i>
+                        <div>
+                            <strong class="d-block mb-1">Pengajuan Lembur Baru!</strong>
+                            <div class="small">${data.lembur.user.name} - ${data.lembur.keterangan}</div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+
+                document.getElementById('notif-container').appendChild(newNotif);
+
+                // Putar Suara
+                if (isAudioAllowed) {
+                    audioFile.cloneNode().play().catch(e => console.warn("Audio diblokir:", e));
+                }
             });
     </script>
 </body>

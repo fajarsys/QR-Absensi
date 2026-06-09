@@ -9,6 +9,7 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\OvertimeController;
 use App\Http\Controllers\AiController;
 
 // =========================================================================
@@ -35,8 +36,12 @@ Route::middleware(['auth', 'kunci.perangkat'])->group(function () {
     Route::put('/profil/update', [ProfileController::class, 'update'])->name('profile.update');
 
     // Jalur Izin 
-    Route::get('/izin', [LeaveController::class, 'index'])->name('izin.index');
-    Route::post('/izin', [LeaveController::class, 'store'])->name('izin.store');
+    Route::get('/pengajuan/izin', [LeaveController::class, 'createIzin'])->name('izin.create');
+    Route::post('/pengajuan/izin', [LeaveController::class, 'store'])->name('izin.store');
+
+    // Jalur Lembur
+    Route::get('/pengajuan/lembur', [OvertimeController::class, 'createLembur'])->name('lembur.create');
+    Route::post('/lembur', [OvertimeController::class, 'store'])->name('lembur.store');
 
     // Scan Absen
     Route::get('/scan', [AttendanceController::class, 'scan'])->name('scan');
@@ -74,6 +79,11 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/izin', [LeaveController::class, 'adminIndex'])->name('izin.adminIndex');
     Route::post('/izin/{id}/status', [LeaveController::class, 'approve'])->name('izin.approve');
     Route::delete('/izin/{id}', [LeaveController::class, 'destroy'])->name('izin.destroy');
+
+    // Kelola Lembur (Di-manage di halaman yang sama dengan Izin)
+    Route::post('/lembur/{id}/status', [OvertimeController::class, 'approve'])->name('lembur.approve');
+    Route::delete('/lembur/{id}', [OvertimeController::class, 'destroy'])->name('lembur.destroy');
+
 
     // Jalur Kehadiran Karyawan 
     Route::get('/kehadiran', [AttendanceController::class, 'adminIndex'])->name('attendance.adminIndex');

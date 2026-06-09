@@ -31,6 +31,18 @@ class User extends Authenticatable
         return $this->hasMany(Attendance::class);
     }
 
+    // Relasi ke data lembur milik karyawan itu sendiri
+    public function overtimes()
+    {
+        return $this->hasMany(Overtime::class, 'user_id');
+    }
+
+    // Relasi ke data lembur yang disetujui (jika user ini adalah atasan/admin)
+    public function approvedOvertimes()
+    {
+        return $this->hasMany(Overtime::class, 'approved_by');
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

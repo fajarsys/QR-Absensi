@@ -49,6 +49,16 @@ class AttendanceService
         $waktuScan = Carbon::now();
         $hariIni = Carbon::today();
         
+        // Pengecekan Validitas QR Code
+        $validQrCode = env('QR_CODE_SECRET', 'ABSENSI-KANTOR-123');
+        if (!isset($data['qr_code']) || $data['qr_code'] !== $validQrCode) {
+            return [
+                'status' => 'error',
+                'message' => 'Gagal absen! QR Code yang Anda scan tidak valid atau palsu.',
+                'redirect' => 'back'
+            ];
+        }
+
         // Pengecekan Lokasi
         $office = Office::first();
 

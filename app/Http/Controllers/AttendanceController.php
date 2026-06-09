@@ -17,9 +17,9 @@ class AttendanceController extends Controller
 
     public function adminIndex(FilterAttendanceRequest $request, AttendanceService $service)
     {
-        // 1. Ambil data dari filter. Jika kosong (null), gunakan bulan/tahun saat ini
-        $bulan = $request->validated('month') ?? date('m');
-        $tahun = $request->validated('year') ?? date('Y');
+        $validated = $request->validated();
+        $bulan = $validated['month'] ?? date('m');
+        $tahun = $validated['year'] ?? date('Y');
 
         // 2. Lempar variabel yang sudah pasti valid ke Service
         $attendances = $service->getMonthlyAttendances($bulan, $tahun);
