@@ -37,20 +37,26 @@
                     <th>Jam Masuk</th>
                     <th>Jam Pulang</th>
                     <th>Status</th>
+                    <th>Lembur</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse ($attendances as $index => $absen)
+                @php
+                    $lemburHariIni = $overtimes->get($absen->date);
+                    $durasiLembur = $lemburHariIni ? $lemburHariIni->durasi_menit . ' menit' : '-';
+                @endphp
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>{{ \Carbon\Carbon::parse($absen->date)->translatedFormat('l, d M Y') }}</td>
                     <td>{{ $absen->clock_in ?? '-' }}</td>
                     <td>{{ $absen->clock_out ?? '-' }}</td>
                     <td>{{ $absen->status }}</td>
+                    <td>{{ $durasiLembur }}</td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5">Tidak ada data kehadiran pada periode ini.</td>
+                    <td colspan="6">Tidak ada data kehadiran pada periode ini.</td>
                 </tr>
                 @endforelse
             </tbody>
