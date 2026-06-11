@@ -244,14 +244,14 @@
                         <td><span class="badge bg-secondary">Menunggu</span></td>
                         <td class="text-center pe-4">
                             <div class="d-flex justify-content-center gap-2 align-items-center">
-                                <form action="/admin/izin/${data.izin.id}/approve" method="POST">
+                                <form action="/admin/izin/${data.izin.id}/status" method="POST">
                                     <input type="hidden" name="_token" value="${csrfToken}">
                                     <input type="hidden" name="status" value="approved">
                                     <button type="submit" class="btn btn-sm btn-success" title="Setujui" onclick="return confirm('Setujui pengajuan ini dan masukkan ke data absensi?')">
                                         <i class="bi bi-check-lg"></i>
                                     </button>
                                 </form>
-                                <form action="/admin/izin/${data.izin.id}/approve" method="POST">
+                                <form action="/admin/izin/${data.izin.id}/status" method="POST">
                                     <input type="hidden" name="_token" value="${csrfToken}">
                                     <input type="hidden" name="status" value="rejected">
                                     <button type="submit" class="btn btn-sm btn-danger" title="Tolak" onclick="return confirm('Tolak pengajuan ini?')">
