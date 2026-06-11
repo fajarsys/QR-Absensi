@@ -55,7 +55,7 @@ Route::middleware(['auth', 'kunci.perangkat'])->group(function () {
 // =========================================================================
 // 3. ZONA KHUSUS ADMIN - VIP (HANYA BUTUH AUTH, TERPISAH DARI KUNCI PERANGKAT)
 // =========================================================================
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 
     // URL: /admin/dashboard | Name: admin.dashboard
     Route::get('/dashboard', function () {
