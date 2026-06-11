@@ -24,9 +24,9 @@ class FilterAttendanceRequest extends FormRequest
     {
         return [
             // nullable berarti boleh kosong. dan hanya bisa diisi berupa angka 1-12
-            'month' => 'nullable|integer|between:1,12',
+            'month' => 'nullable|numeric|between:1,12',
             // Wajib berupa angka, minimal 2000
-            'year'  => 'nullable|integer|min:2000'
+            'year'  => 'nullable|numeric|min:2000'
         ];
     }
 }

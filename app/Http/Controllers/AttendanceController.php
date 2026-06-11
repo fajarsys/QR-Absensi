@@ -66,22 +66,24 @@ class AttendanceController extends Controller
             $nama = $absenUser->first()->user->name;
             
             // Total Kehadiran Fisik (Status = Hadir)
-            $totalHadir = $absenUser->where('status', 'Hadir')->count();
+            $totalHadir = $absenUser->filter(function($item) {
+                return strtolower($item->status) === 'hadir';
+            })->count();
             
             // Hitung Telat
             $totalTelat = $absenUser->filter(function($item) {
-                return str_contains($item->notes, 'Terlambat');
+                return stripos($item->notes, 'Terlambat') !== false;
             })->count();
 
             // Hitung Tepat Waktu
             $tepatWaktu = $absenUser->filter(function($item) {
-                return str_contains($item->notes, 'Tepat Waktu') || str_contains($item->notes, 'Lembur Masuk');
+                return stripos($item->notes, 'Tepat Waktu') !== false || stripos($item->notes, 'Lembur Masuk') !== false;
             })->count();
 
             // Izin / Sakit / Cuti
-            $sakit = $absenUser->where('status', 'Sakit')->count();
-            $izin = $absenUser->where('status', 'Izin')->count();
-            $cuti = $absenUser->where('status', 'Cuti')->count();
+            $sakit = $absenUser->filter(function($item) { return strtolower($item->status) === 'sakit'; })->count();
+            $izin  = $absenUser->filter(function($item) { return strtolower($item->status) === 'izin'; })->count();
+            $cuti  = $absenUser->filter(function($item) { return strtolower($item->status) === 'cuti'; })->count();
 
             // Total Lembur (menit)
             $totalLemburMenit = $overtimes->where('user_id', $userId)->sum('durasi_menit');

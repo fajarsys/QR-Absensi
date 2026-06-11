@@ -15,7 +15,7 @@
             <div class="col-md-4">
                 <select name="month" class="form-select">
                     @foreach(range(1, 12) as $m)
-                        <option value="{{ sprintf('%02d', $m) }}" {{ $bulan == $m ? 'selected' : '' }}>
+                        <option value="{{ $m }}" {{ $bulan == $m ? 'selected' : '' }}>
                             {{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
                         </option>
                     @endforeach
