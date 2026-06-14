@@ -50,7 +50,7 @@ class AttendanceService
         $hariIni = Carbon::today();
         
         // Pengecekan Validitas QR Code Dinamis
-        $secret = env('QR_CODE_SECRET', 'ABSENSI-KANTOR-123');
+        $secret = config('app.qr_secret');
         $currentWindow = floor(time() / 15);
         
         $validTokenCurrent = hash('sha256', $secret . $currentWindow);

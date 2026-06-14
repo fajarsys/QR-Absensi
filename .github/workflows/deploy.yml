@@ -13,24 +13,25 @@ jobs:
       - name: Eksekusi Deployment
         run: |
           cd /opt/QR-Absensi
-          
+
           # 1. Tarik pembaruan kode terbaru
           git pull origin main
-          
-          # 2. Perbaiki hak akses file ke user web (Krusial agar NPM bisa menulis)
+
+          # 2. Perbaiki hak akses file ke user web
           docker exec -u root absensi_app chown -R www-data:www-data /var/www/html
-          
+
           # 3. Instal dependensi vendor baru
           docker exec absensi_app composer install --no-interaction --prefer-dist --optimize-autoloader
-          
-          # 4. Kompilasi asset frontend (Vite/Tailwind) di dalam container
-          docker exec -u www-data absensi_app bash -c "npm install && npm run build"
-          
+
+          # 4. Kompilasi asset frontend (Vite/Tailwind) langsung di Host Proxmox
+          npm install
+          npm run build
+
           # 5. Eksekusi migrasi database secara paksa
           docker exec absensi_app php artisan migrate --force
-          
+
           # 6. Bersihkan seluruh cache sistem
           docker exec absensi_app php artisan optimize:clear
-          
+
           # 7. Restart daemon WebSocket (Reverb)
           docker exec absensi_app php artisan reverb:restart

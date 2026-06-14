@@ -29,7 +29,7 @@ class OfficeController extends Controller
 
     public function renderQrCode()
     {
-        $secret = env('QR_CODE_SECRET', 'ABSENSI-KANTOR-123');
+        $secret = config('app.qr_secret');
         $window = floor(time() / 15);
         $qrString = hash('sha256', $secret . $window);
 

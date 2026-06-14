@@ -123,4 +123,14 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | QR Code Secret Key
+    |--------------------------------------------------------------------------
+    |
+    | Digunakan sebagai kunci untuk membuat Hash dari QR Code Dinamis.
+    |
+    */
+    'qr_secret' => env('QR_CODE_SECRET', 'ABSENSI-KANTOR-123'),
+
 ];
