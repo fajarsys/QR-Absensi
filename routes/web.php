@@ -68,6 +68,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/office/qr-display', [OfficeController::class, 'qrDisplay'])->name('office.qr-display');
     Route::put('/office/{id}', [OfficeController::class, 'update'])->name('office.update');
 
+    // Hari Libur
+    Route::get('/holidays', [\App\Http\Controllers\HolidayController::class, 'index'])->name('holidays.index');
+    Route::post('/holidays', [\App\Http\Controllers\HolidayController::class, 'store'])->name('holidays.store');
+    Route::delete('/holidays/{id}', [\App\Http\Controllers\HolidayController::class, 'destroy'])->name('holidays.destroy');
+
     // Jalur Jadwal
     Route::get('/jadwal', [ScheduleController::class, 'adminIndex'])->name('schedule');
     Route::post('/jadwal/import', [ScheduleController::class, 'importExcel'])->name('schedule.import');

@@ -105,21 +105,65 @@ class AttendanceService
 
         // PINTU 2: Sudah Masuk, Tinggal Pulang
         if ($absenHariIni && $absenHariIni->clock_out == null) {
+            // Ambil jadwal hari ini untuk pengecekan jam pulang
+            $tanggalHariIni = $hariIni->format('Y-m-d');
+            $jadwalHariIni = UserSchedule::with('schedule')
+                            ->where('user_id', $userId)
+                            ->where('schedule_date', $tanggalHariIni)
+                            ->first();
+
+            $catatanPulang = $absenHariIni->notes; // Pertahankan catatan saat masuk
+            $pesanPulang = 'Berhasil Absen Pulang! Jarak: ' . round($distance) . ' meter. Hati-hati di jalan!';
+
+            if ($jadwalHariIni) {
+                $jamPulangNormal = Carbon::parse($jadwalHariIni->schedule->end_time);
+                
+                // Aturan Khusus Hari Sabtu (Pulang jam 14:00)
+                if ($waktuScan->isSaturday()) {
+                    $jamPulangNormal = Carbon::parse('14:00:00');
+                }
+
+                // Cek Pulang Cepat
+                if ($waktuScan->lessThan($jamPulangNormal)) {
+                    $menitAwal = $waktuScan->diffInMinutes($jamPulangNormal);
+                    $catatanTambahan = 'Pulang Cepat ' . $menitAwal . ' menit';
+                    // Gabungkan dengan catatan masuk jika ada
+                    $catatanPulang = $catatanPulang ? $catatanPulang . ' | ' . $catatanTambahan : $catatanTambahan;
+                    $pesanPulang = 'Berhasil Absen Pulang! Namun Anda pulang lebih awal ' . $menitAwal . ' menit dari jadwal (' . $jamPulangNormal->format('H:i') . ').';
+                }
+            }
+
             $absenHariIni->update([
                 'clock_out' => $waktuScan->format('H:i:s'),
                 'latitude_out' => $data['latitude'],
                 'longitude_out' => $data['longitude'],
+                'status' => 'Hadir', // Syarat hadir terpenuhi (sudah absen pulang)
+                'notes' => $catatanPulang
             ]);
 
             return [
                 'status' => 'success',
-                'message' => 'Berhasil Absen Pulang! Jarak: ' . round($distance) . ' meter. Hati-hati di jalan!',
+                'message' => $pesanPulang,
                 'redirect' => 'dashboard'
             ];
         }
 
         // PINTU 1: Proses Absen Masuk
         $tanggalHariIni = $hariIni->format('Y-m-d');
+        
+        // Blokir Masuk di Hari Libur / Tanggal Merah
+        $isHoliday = \App\Models\Holiday::whereDate('holiday_date', $tanggalHariIni)->first();
+        $isSunday = $waktuScan->isSunday();
+        
+        if ($isHoliday || $isSunday) {
+            $namaLibur = $isHoliday ? $isHoliday->title : 'Minggu';
+            return [
+                'status' => 'error',
+                'message' => 'Hari ini adalah hari libur (' . $namaLibur . '). Anda tidak perlu absen masuk. Silakan ajukan lembur jika Anda ditugaskan bekerja.',
+                'redirect' => 'back'
+            ];
+        }
+
         $jadwalHariIni = UserSchedule::with('schedule')
                         ->where('user_id', $userId)
                         ->where('schedule_date', $tanggalHariIni) 
@@ -157,7 +201,7 @@ class AttendanceService
             'clock_in' => $waktuScan->format('H:i:s'),
             'latitude_in' => $data['latitude'],
             'longitude_in' => $data['longitude'],
-            'status' => 'Hadir',
+            'status' => 'Belum Pulang', // Status awal, berubah jadi Hadir saat clock_out
             'notes' => $notes
         ]);
 

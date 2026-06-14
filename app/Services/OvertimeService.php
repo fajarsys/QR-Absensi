@@ -16,40 +16,17 @@ class OvertimeService
 
     public function submitPengajuanLembur(array $validatedData)
     {
-        // cek jadwal hari ini dan absen masuk
-        //jika jadwal tidak ditemukan -> tidak ada jadwal reguler, jika lembur harus ada jadwal reguler 
-
         $userId = Auth::id();
         $tanggalLembur = $validatedData['tanggal'];
-        $hariIni = Carbon::today();
 
-        $jadwal = UserSchedule::with('schedule')
-            ->where('user_id', $userId)
-            ->where('schedule_date', $tanggalLembur)
-            ->first();
-
-        if (!$jadwal) {
-            throw new Exception("Anda tidak memiliki jadwal kerja pada tanggal tersebut.");
-        }
-
-        $absenMasuk = Attendance::where('user_id', $userId)
-            ->whereDate('date', $tanggalLembur)
-            ->whereNotNull('clock_in')
-            ->first();
-
-        if (!$absenMasuk) {
-            throw new Exception("Anda tidak bisa mengajukan lembur karena belum absen masuk pada tanggal tersebut.");
-        }
-
-        $jamPulangNormal = $jadwal->schedule->end_time;
-        $waktuPulang = Carbon::parse($tanggalLembur . ' ' . $jamPulangNormal);
+        // Menghapus validasi wajib ada jadwal/absen karena lembur bisa dilakukan di Hari Libur / Tanggal Merah
+        // Admin yang akan memfilter dan menyetujuinya di Dashboard.
 
         $waktuMulaiLembur = Carbon::parse($tanggalLembur . ' ' . $validatedData['jam_mulai']);
         $waktuSelesaiLembur = Carbon::parse($tanggalLembur . ' ' . $validatedData['jam_selesai']);
 
-        if ($waktuMulaiLembur->lessThan($waktuPulang)) {
-            // Memberikan pesan error yang dinamis sesuai jam pulang asli karyawan
-            throw new Exception("Pengajuan gagal. Jam mulai lembur tidak boleh sebelum jam pulang normal Anda (" . $waktuPulang->format('H:i') . ").");
+        if ($waktuMulaiLembur->greaterThanOrEqualTo($waktuSelesaiLembur)) {
+            throw new Exception("Pengajuan gagal. Jam mulai lembur tidak boleh sama atau melebihi jam selesai.");
         }
 
         $durasiMenit = $waktuMulaiLembur->diffInMinutes($waktuSelesaiLembur);

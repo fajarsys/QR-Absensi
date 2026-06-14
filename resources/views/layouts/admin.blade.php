@@ -42,6 +42,11 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a href="{{ route('admin.holidays.index') }}" class="nav-link {{ request()->routeIs('admin.holidays*') ? 'active' : '' }}">
+                    <i class="bi bi-calendar-x-fill me-2"></i> Tanggal Merah
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="{{ route ('admin.attendance.adminIndex')}}" class="nav-link nav-link {{ request()->routeIs('admin.attendance.adminIndex') ? 'active' : '' }} ">
                     <i class="bi bi-clipboard2-fill"></i> Data Kehadiran
                 </a>
