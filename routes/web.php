@@ -64,6 +64,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // URL: /admin/office | Name: admin.office
     Route::get('/office', [OfficeController::class, 'index'])->name('office');
+    Route::get('/office/qr-render', [OfficeController::class, 'renderQrCode'])->name('office.qr-render');
+    Route::get('/office/qr-display', [OfficeController::class, 'qrDisplay'])->name('office.qr-display');
     Route::put('/office/{id}', [OfficeController::class, 'update'])->name('office.update');
 
     // Jalur Jadwal

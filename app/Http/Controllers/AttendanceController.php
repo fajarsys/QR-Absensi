@@ -37,11 +37,11 @@ class AttendanceController extends Controller
     {
         $attendances = $service->getUserAttendances($user->id, (int)$month, (int)$year);
         $overtimes = \App\Models\Overtime::where('user_id', $user->id)
-                        ->whereMonth('tanggal', $month)
-                        ->whereYear('tanggal', $year)
-                        ->where('status', 'approved')
-                        ->get()
-                        ->keyBy('tanggal');
+            ->whereMonth('tanggal', $month)
+            ->whereYear('tanggal', $year)
+            ->where('status', 'approved')
+            ->get()
+            ->keyBy('tanggal');
 
         return view('admin.kehadiran.print', compact('user', 'attendances', 'overtimes', 'month', 'year'));
     }
@@ -57,33 +57,39 @@ class AttendanceController extends Controller
     {
         $attendances = $service->getMonthlyAttendances((int) $month, (int) $year);
         $overtimes = \App\Models\Overtime::whereMonth('tanggal', $month)
-                        ->whereYear('tanggal', $year)
-                        ->where('status', 'approved')
-                        ->get();
+            ->whereYear('tanggal', $year)
+            ->where('status', 'approved')
+            ->get();
 
         // Mengelompokkan data berdasarkan user
         $rekap = $attendances->groupBy('user_id')->map(function ($absenUser, $userId) use ($overtimes) {
             $nama = $absenUser->first()->user->name;
-            
+
             // Total Kehadiran Fisik (Status = Hadir)
-            $totalHadir = $absenUser->filter(function($item) {
+            $totalHadir = $absenUser->filter(function ($item) {
                 return strtolower($item->status) === 'hadir';
             })->count();
-            
+
             // Hitung Telat
-            $totalTelat = $absenUser->filter(function($item) {
+            $totalTelat = $absenUser->filter(function ($item) {
                 return stripos($item->notes, 'Terlambat') !== false;
             })->count();
 
             // Hitung Tepat Waktu
-            $tepatWaktu = $absenUser->filter(function($item) {
+            $tepatWaktu = $absenUser->filter(function ($item) {
                 return stripos($item->notes, 'Tepat Waktu') !== false || stripos($item->notes, 'Lembur Masuk') !== false;
             })->count();
 
             // Izin / Sakit / Cuti
-            $sakit = $absenUser->filter(function($item) { return strtolower($item->status) === 'sakit'; })->count();
-            $izin  = $absenUser->filter(function($item) { return strtolower($item->status) === 'izin'; })->count();
-            $cuti  = $absenUser->filter(function($item) { return strtolower($item->status) === 'cuti'; })->count();
+            $sakit = $absenUser->filter(function ($item) {
+                return strtolower($item->status) === 'sakit';
+            })->count();
+            $izin  = $absenUser->filter(function ($item) {
+                return strtolower($item->status) === 'izin';
+            })->count();
+            $cuti  = $absenUser->filter(function ($item) {
+                return strtolower($item->status) === 'cuti';
+            })->count();
 
             // Total Lembur (menit)
             $totalLemburMenit = $overtimes->where('user_id', $userId)->sum('durasi_menit');

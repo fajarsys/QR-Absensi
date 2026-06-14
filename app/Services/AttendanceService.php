@@ -49,12 +49,17 @@ class AttendanceService
         $waktuScan = Carbon::now();
         $hariIni = Carbon::today();
         
-        // Pengecekan Validitas QR Code
-        $validQrCode = env('QR_CODE_SECRET', 'ABSENSI-KANTOR-123');
-        if (!isset($data['qr_code']) || $data['qr_code'] !== $validQrCode) {
+        // Pengecekan Validitas QR Code Dinamis
+        $secret = env('QR_CODE_SECRET', 'ABSENSI-KANTOR-123');
+        $currentWindow = floor(time() / 15);
+        
+        $validTokenCurrent = hash('sha256', $secret . $currentWindow);
+        $validTokenPrevious = hash('sha256', $secret . ($currentWindow - 1));
+
+        if (!isset($data['qr_code']) || !in_array($data['qr_code'], [$validTokenCurrent, $validTokenPrevious])) {
             return [
                 'status' => 'error',
-                'message' => 'Gagal absen! QR Code yang Anda scan tidak valid atau palsu.',
+                'message' => 'Gagal absen! QR Code palsu atau sudah kedaluwarsa. Silakan scan ulang.',
                 'redirect' => 'back'
             ];
         }

@@ -14,15 +14,12 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'admin' => \App\Http\Middleware\IsAdmin::class,
+            'kunci.perangkat' => \App\Http\Middleware\CheckDeviceBinding::class,
         ]);
 
         // Pasang Anti-Cache untuk semua halaman Web
         $middleware->web(append: [
             \App\Http\Middleware\PreventBackHistory::class,
-        ]);
-        //penguncian perangkat
-        $middleware->alias([
-            'kunci.perangkat' => \App\Http\Middleware\CheckDeviceBinding::class,
         ]);
 
         // Menerima semua header proxy (untuk Cloudflare Tunnel / HTTPS)

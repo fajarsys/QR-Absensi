@@ -21,4 +21,20 @@ class OfficeController extends Controller
 
         return redirect()->back()->with('success', 'Data lokasi kantor berhasil diperbarui!');
     }
+
+    public function qrDisplay()
+    {
+        return view('admin.office.qr_display');
+    }
+
+    public function renderQrCode()
+    {
+        $secret = env('QR_CODE_SECRET', 'ABSENSI-KANTOR-123');
+        $window = floor(time() / 15);
+        $qrString = hash('sha256', $secret . $window);
+
+        $svg = \SimpleSoftwareIO\QrCode\Facades\QrCode::size(200)->generate($qrString);
+        
+        return response($svg)->header('Content-Type', 'image/svg+xml');
+    }
 }
