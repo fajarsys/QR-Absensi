@@ -18,7 +18,7 @@ class AttendanceService
      *
      * @param int $bulan
      * @param int $tahun
-    */
+     */
     public function getMonthlyAttendances($bulan, $tahun)
     {
         return Attendance::with('user')
@@ -48,11 +48,11 @@ class AttendanceService
     {
         $waktuScan = Carbon::now();
         $hariIni = Carbon::today();
-        
+
         // Pengecekan Validitas QR Code Dinamis
         $secret = config('app.qr_secret');
         $currentWindow = floor(time() / 15);
-        
+
         $validTokenCurrent = hash('sha256', $secret . $currentWindow);
         $validTokenPrevious = hash('sha256', $secret . ($currentWindow - 1));
 
@@ -71,13 +71,13 @@ class AttendanceService
             return [
                 'status' => 'error',
                 'message' => 'Gagal absen! Titik koordinat kantor belum diatur oleh Admin.',
-                'redirect' => 'back' 
+                'redirect' => 'back'
             ];
         }
         $distance = $this->calculateDistance(
-            $data['latitude'], 
-            $data['longitude'], 
-            $office->latitude, 
+            $data['latitude'],
+            $data['longitude'],
+            $office->latitude,
             $office->longitude
         );
 
@@ -91,8 +91,8 @@ class AttendanceService
 
         // Cek Absen Hari Ini
         $absenHariIni = Attendance::where('user_id', $userId)
-                                  ->whereDate('date', $hariIni)
-                                  ->first();
+            ->whereDate('date', $hariIni)
+            ->first();
 
         // PINTU 3: Sudah Masuk & Pulang
         if ($absenHariIni && $absenHariIni->clock_out != null) {
@@ -101,6 +101,16 @@ class AttendanceService
                 'message' => 'Akses Ditolak: Anda sudah menyelesaikan absensi hari ini.',
                 'redirect' => 'dashboard'
             ];
+        } else if ($absenHariIni && $absenHariIni->clock_out == null) {
+            $selisihMenit = $waktuScan->diffInMinutes($absenHariIni->clock_in);
+            if ($selisihMenit < 15) {
+                $sisaWaktu = 15 - $selisihMenit;
+                return [
+                    'status' => 'error',
+                    'message' => "Anda baru saja merekam absen masuk. Silakan tunggu {$sisaWaktu} menit lagi untuk bisa absen pulang.",
+                    'redirect' => 'back'
+                ];
+            }
         }
 
         // PINTU 2: Sudah Masuk, Tinggal Pulang
@@ -108,16 +118,16 @@ class AttendanceService
             // Ambil jadwal hari ini untuk pengecekan jam pulang
             $tanggalHariIni = $hariIni->format('Y-m-d');
             $jadwalHariIni = UserSchedule::with('schedule')
-                            ->where('user_id', $userId)
-                            ->where('schedule_date', $tanggalHariIni)
-                            ->first();
+                ->where('user_id', $userId)
+                ->where('schedule_date', $tanggalHariIni)
+                ->first();
 
             $catatanPulang = $absenHariIni->notes; // Pertahankan catatan saat masuk
             $pesanPulang = 'Berhasil Absen Pulang! Jarak: ' . round($distance) . ' meter. Hati-hati di jalan!';
 
             if ($jadwalHariIni) {
                 $jamPulangNormal = Carbon::parse($jadwalHariIni->schedule->end_time);
-                
+
                 // Aturan Khusus Hari Sabtu (Pulang jam 14:00)
                 if ($waktuScan->isSaturday()) {
                     $jamPulangNormal = Carbon::parse('14:00:00');
@@ -150,11 +160,11 @@ class AttendanceService
 
         // PINTU 1: Proses Absen Masuk
         $tanggalHariIni = $hariIni->format('Y-m-d');
-        
+
         // Blokir Masuk di Hari Libur / Tanggal Merah
         $isHoliday = \App\Models\Holiday::whereDate('holiday_date', $tanggalHariIni)->first();
         $isSunday = $waktuScan->isSunday();
-        
+
         if ($isHoliday || $isSunday) {
             $namaLibur = $isHoliday ? $isHoliday->title : 'Minggu';
             return [
@@ -165,9 +175,9 @@ class AttendanceService
         }
 
         $jadwalHariIni = UserSchedule::with('schedule')
-                        ->where('user_id', $userId)
-                        ->where('schedule_date', $tanggalHariIni) 
-                        ->first();
+            ->where('user_id', $userId)
+            ->where('schedule_date', $tanggalHariIni)
+            ->first();
 
         if (!$jadwalHariIni) {
             return [
@@ -180,7 +190,7 @@ class AttendanceService
         // Logika Keterlambatan
         $jamMasuk = Carbon::parse($jadwalHariIni->schedule->start_time);
         $batasWaktu = $jamMasuk->copy()->addMinutes($jadwalHariIni->schedule->late_tolerance);
-        
+
         $notes = 'Tepat Waktu';
         $pesanPemberitahuan = 'Berhasil Absen Masuk! Semangat bekerja!';
 
@@ -214,15 +224,15 @@ class AttendanceService
 
 
     /**
-    * Menghitung jarak antara dua titik koordinat
-    * @param float $lat1 Latitude titik awal
-    * @param float $lon1 Longitude titik awal
-    * @param float $lat2 Latitude titik tujuan
-    * @param float $lon2 Longitude titik tujuan
-    * @return float Jarak dalam satuan meter
-    */
+     * Menghitung jarak antara dua titik koordinat
+     * @param float $lat1 Latitude titik awal
+     * @param float $lon1 Longitude titik awal
+     * @param float $lat2 Latitude titik tujuan
+     * @param float $lon2 Longitude titik tujuan
+     * @return float Jarak dalam satuan meter
+     */
 
-    // Fungsi Rumus Haversine (Standar Internasional)
+    // Fungsi Rumus Haversine
     private function calculateDistance($lat1, $lon1, $lat2, $lon2)
     {
         $earthRadius = 6371000; // Radius bumi dalam satuan meter
@@ -231,8 +241,8 @@ class AttendanceService
         $dLon = deg2rad($lon2 - $lon1);
 
         $a = sin($dLat / 2) * sin($dLat / 2) +
-             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
-             sin($dLon / 2) * sin($dLon / 2);
+            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+            sin($dLon / 2) * sin($dLon / 2);
 
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
 

@@ -50,7 +50,13 @@
                     <td>{{ $index + 1 }}</td>
                     <td>{{ \Carbon\Carbon::parse($absen->date)->translatedFormat('l, d M Y') }}</td>
                     <td>{{ $absen->clock_in ?? '-' }}</td>
-                    <td>{{ $absen->clock_out ?? '-' }}</td>
+                    <td>
+                        @if(is_null($absen->clock_out))
+                            <span style="color: red; font-weight: bold;">Tidak Absen</span>
+                        @else
+                            {{ $absen->clock_out }}
+                        @endif
+                    </td>
                     <td>{{ $absen->status }}</td>
                     <td>{{ $durasiLembur }}</td>
                 </tr>

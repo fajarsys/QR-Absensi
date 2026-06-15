@@ -51,7 +51,13 @@
                     <td class="ps-3 fw-bold">{{ $absen->user->name }}</td>
                     <td>{{ \Carbon\Carbon::parse($absen->date)->translatedFormat('d M Y') }}</td>
                     <td><span class="text-success">{{ $absen->clock_in ?? '-' }}</span></td>
-                    <td><span class="text-primary">{{ $absen->clock_out ?? '-' }}</span></td>
+                    <td>
+                        @if(is_null($absen->clock_out))
+                            <span class="badge bg-danger">Tidak Absen</span>
+                        @else
+                            <span class="text-primary">{{ $absen->clock_out }}</span>
+                        @endif
+                    </td>
                     <td>
                         <span class="badge bg-{{ $absen->status == 'Hadir' ? 'success' : ($absen->status == 'Izin' ? 'info' : 'danger') }}">
                             {{ $absen->status }}
