@@ -83,6 +83,7 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         $user->device_id = null;
+        $user->user_agent = null;
         $user->save();
 
         return redirect()->back()->with('success', "Perangkat untuk karyawan {$user->name} berhasil di-reset.");

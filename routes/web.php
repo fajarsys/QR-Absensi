@@ -12,9 +12,7 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\OvertimeController;
 use App\Http\Controllers\AiController;
 
-// =========================================================================
 // 1. ZONA GUEST (BELUM LOGIN)
-// =========================================================================
 Route::middleware('guest')->group(function () {
     Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
     Route::get('/login', [AuthController::class, 'showLoginForm']);
@@ -22,9 +20,7 @@ Route::middleware('guest')->group(function () {
 });
 
 
-// =========================================================================
 // 2. ZONA MEMBER / KARYAWAN (SUDAH LOGIN & DIKUNCI PERANGKATNYA)
-// =========================================================================
 Route::middleware(['auth', 'kunci.perangkat'])->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -52,9 +48,7 @@ Route::middleware(['auth', 'kunci.perangkat'])->group(function () {
 });
 
 
-// =========================================================================
 // 3. ZONA KHUSUS ADMIN - VIP (HANYA BUTUH AUTH, TERPISAH DARI KUNCI PERANGKAT)
-// =========================================================================
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 
     // URL: /admin/dashboard | Name: admin.dashboard

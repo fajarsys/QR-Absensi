@@ -22,6 +22,7 @@ class AuthService
                 if (is_null($user->device_id)) {
                     $newDeviceId = (string) Str::uuid();
                     $user->device_id = $newDeviceId;
+                    $user->user_agent = request()->userAgent();
                     $user->save();
 
                     // Kirim token ini agar Controller tahu harus menanam cookie baru
