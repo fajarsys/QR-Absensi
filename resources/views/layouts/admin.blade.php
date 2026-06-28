@@ -17,7 +17,9 @@
 <body>
 
     <nav id="sidebar" class="p-3">
-        <h5 class="text-center mb-4 mt-2">🚀Absensi Karyawan</h5>
+        <h5 class="text-center fw-bold mb-4 mt-3" style="color: #0d6efd;">
+            <i class="bi bi-rocket-takeoff-fill me-2"></i>Absensi App
+        </h5>
         <hr>
         <ul class="nav flex-column">
             <li class="nav-item">
