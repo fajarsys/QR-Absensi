@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Leave;
 use App\Models\Attendance;
 use App\Events\IzinDiajukan;
+use App\Events\ActivityLogged;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
@@ -42,6 +43,15 @@ class LeaveService
             ]);
 
             event(new IzinDiajukan($izin));
+
+            broadcast(new ActivityLogged([
+                'id' => 'leave_' . $izin->id,
+                'type' => 'leave',
+                'user_name' => \App\Models\User::find($userId)->name,
+                'description' => 'Mengajukan Izin (' . $izin->reason . ')',
+                'status' => 'pending',
+                'time' => now()->format('H:i')
+            ]));
 
             return $izin;
         });

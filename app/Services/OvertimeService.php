@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Exception;
 use Spatie\RouteDiscovery\Attributes\Where;
+use App\Events\ActivityLogged;
 
 class OvertimeService
 {
@@ -43,6 +44,15 @@ class OvertimeService
         ]);
 
         event(new \App\Events\LemburDiajukan($overtime));
+
+        broadcast(new ActivityLogged([
+            'id' => 'overtime_' . $overtime->id,
+            'type' => 'overtime',
+            'user_name' => \App\Models\User::find($userId)->name,
+            'description' => 'Mengajukan Lembur (' . $overtime->keterangan . ')',
+            'status' => 'pending',
+            'time' => now()->format('H:i')
+        ]));
 
         return $overtime;
     }

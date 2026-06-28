@@ -7,6 +7,8 @@ use Carbon\Carbon;
 use App\Models\Office;
 use App\Models\Attendance;
 use App\Models\UserSchedule;
+use Illuminate\Support\Facades\Log;
+use App\Events\ActivityLogged;
 
 class AttendanceService
 {
@@ -151,6 +153,15 @@ class AttendanceService
                 'notes' => $catatanPulang
             ]);
 
+            broadcast(new ActivityLogged([
+                'id' => 'att_' . $absenHariIni->id,
+                'type' => 'attendance',
+                'user_name' => \App\Models\User::find($userId)->name,
+                'description' => 'Melakukan Absen Pulang',
+                'status' => 'Hadir',
+                'time' => now()->format('H:i')
+            ]));
+
             return [
                 'status' => 'success',
                 'message' => $pesanPulang,
@@ -205,7 +216,7 @@ class AttendanceService
         }
 
         // Simpan Data
-        Attendance::create([
+        $absen = Attendance::create([
             'user_id' => $userId,
             'date' => $tanggalHariIni,
             'clock_in' => $waktuScan->format('H:i:s'),
@@ -214,6 +225,15 @@ class AttendanceService
             'status' => 'Belum Pulang', // Status awal, berubah jadi Hadir saat clock_out
             'notes' => $notes
         ]);
+
+        broadcast(new ActivityLogged([
+            'id' => 'att_' . $absen->id, // Kita perlu variable $absen
+            'type' => 'attendance',
+            'user_name' => \App\Models\User::find($userId)->name,
+            'description' => 'Melakukan Absen Masuk',
+            'status' => 'Belum Pulang',
+            'time' => now()->format('H:i')
+        ]));
 
         return [
             'status' => 'success',
