@@ -10,28 +10,27 @@ jobs:
     runs-on: self-hosted # Menginstruksikan GitHub untuk mengeksekusi ini di server Proxmox Anda
 
     steps:
-      - name: Eksekusi Deployment
+      - name: 1. Tarik Pembaruan Kode
         run: |
           cd /opt/QR-Absensi
+          git pull https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/fajarsys/QR-Absensi.git main
 
-          # 1. Tarik pembaruan kode terbaru
-          git pull https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/anggaslenting178/QR-Absensi.git main
+      - name: 2. Perbaiki Hak Akses File
+        run: docker exec -u root absensi_app chown -R www-data:www-data /var/www/html
 
-          # 2. Perbaiki hak akses file ke user web
-          docker exec -u root absensi_app chown -R www-data:www-data /var/www/html
+      - name: 3. Instal Dependensi Composer (Backend)
+        run: docker exec absensi_app composer install --no-interaction --prefer-dist --optimize-autoloader
 
-          # 3. Instal dependensi vendor baru
-          docker exec absensi_app composer install --no-interaction --prefer-dist --optimize-autoloader
-
-          # 4. Kompilasi asset frontend (Vite/Tailwind) langsung di Host Proxmox
+      - name: 4. Kompilasi Aset Frontend
+        run: |
+          cd /opt/QR-Absensi
           npm install
           npm run build
 
-          # 5. Eksekusi migrasi database secara paksa
-          docker exec absensi_app php artisan migrate --force
+      - name: 5. Eksekusi Migrasi Database
+        run: docker exec absensi_app php artisan migrate --force
 
-          # 6. Bersihkan seluruh cache sistem
+      - name: 6. Manajemen Cache & Restart WebSocket
+        run: |
           docker exec absensi_app php artisan optimize:clear
-
-          # 7. Restart daemon WebSocket (Reverb)
           docker exec absensi_app php artisan reverb:restart
