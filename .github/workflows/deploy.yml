@@ -28,8 +28,7 @@ jobs:
           npm run build
 
       - name: 5. Eksekusi Migrasi Database
-        run: docker exec absensi_app php artisan migrate --force
-
+        run: echo "hallo, hallo"
       - name: 6. Manajemen Cache & Restart WebSocket
         run: |
           docker exec absensi_app php artisan optimize:clear
