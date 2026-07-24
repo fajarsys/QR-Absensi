@@ -47,15 +47,15 @@ class LeaveService
                     try {
                         // Inisialisasi Intervention Image
                         $manager = new ImageManager(new Driver());
-                        $image = $manager->read($file->getRealPath());
+                        $image = $manager->decode($file->getRealPath());
                         
                         // Perkecil ukuran proporsional jika lebarnya lebih dari 1000px
                         $image->scaleDown(width: 1000);
                         
                         // Simpan sebagai WebP dengan kualitas 60% (Sangat efisien)
-                        $image->toWebp(60)->save($fullPath);
+                        $image->save($fullPath, quality: 60);
                         $attachmentPath = $filename;
-                    } catch (\Exception $e) {
+                    } catch (\Throwable $e) {
                         // Fallback jika terjadi error
                         $attachmentPath = $file->store('dokumen_izin', 'public');
                     }
