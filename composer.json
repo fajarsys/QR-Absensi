@@ -8,11 +8,12 @@
     "require": {
         "php": "^8.3",
         "barryvdh/laravel-dompdf": "^3.1",
+        "intervention/image": "^4.0",
         "laravel/ai": "^0.4.3",
         "laravel/framework": "^13.0",
         "laravel/reverb": "^1.0",
         "laravel/tinker": "^3.0",
-        "maatwebsite/excel": "^3.1",
+        "maatwebsite/excel": "4.x-dev",
         "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/laravel-route-attributes": "^1.28",
         "spatie/laravel-route-discovery": "*"

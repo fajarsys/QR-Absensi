@@ -73,7 +73,7 @@
                     <label class="form-label fw-bold text-secondary">Bukti Dokumen <span class="text-danger">*</span></label>
                     <input type="file" name="attachment" class="form-control" accept=".jpg,.jpeg,.png,.pdf">
                     <div class="form-text text-muted">
-                        *Wajib dilampirkan jika Sakit (Surat Dokter). Format: JPG, PNG, atau PDF. Maks: 2MB.
+                        *Wajib dilampirkan jika Sakit (Surat Dokter). Format: JPG, PNG, atau PDF. Maks: 5MB.
                     </div>
                 </div>
 

@@ -10,6 +10,8 @@ use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\UploadedFile;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class LeaveService
 {
@@ -30,7 +32,38 @@ class LeaveService
     public function createLeave(array $data, int $userId, ?UploadedFile $file)
     {
         return DB::transaction(function () use ($data, $userId, $file) {
-            $attachmentPath = $file ? $file->store('dokumen_izin', 'public') : null;
+            $attachmentPath = null;
+            
+            if ($file) {
+                $mimeType = $file->getMimeType();
+                
+                // Jika file berupa gambar, gunakan Intervention Image (WebP)
+                if (str_starts_with($mimeType, 'image/')) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->makeDirectory('dokumen_izin');
+                    
+                    $filename = 'dokumen_izin/' . uniqid('izin_') . '.webp';
+                    $fullPath = storage_path('app/public/' . $filename);
+                    
+                    try {
+                        // Inisialisasi Intervention Image
+                        $manager = new ImageManager(new Driver());
+                        $image = $manager->read($file->getRealPath());
+                        
+                        // Perkecil ukuran proporsional jika lebarnya lebih dari 1000px
+                        $image->scaleDown(width: 1000);
+                        
+                        // Simpan sebagai WebP dengan kualitas 60% (Sangat efisien)
+                        $image->toWebp(60)->save($fullPath);
+                        $attachmentPath = $filename;
+                    } catch (\Exception $e) {
+                        // Fallback jika terjadi error
+                        $attachmentPath = $file->store('dokumen_izin', 'public');
+                    }
+                } else {
+                    // Jika bukan gambar (misal PDF), simpan seperti biasa
+                    $attachmentPath = $file->store('dokumen_izin', 'public');
+                }
+            }
 
             $izin = Leave::create([
                 'user_id' => $userId,
