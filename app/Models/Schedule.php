@@ -15,4 +15,10 @@ class Schedule extends Model
         'late_tolerance',
 
     ];
+
+    // Relasi ke user yang menggunakan jadwal shift ini
+    public function userSchedules()
+    {
+        return $this->hasMany(UserSchedule::class);
+    }
 }

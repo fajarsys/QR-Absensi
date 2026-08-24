@@ -43,6 +43,18 @@ class User extends Authenticatable
         return $this->hasMany(Overtime::class, 'approved_by');
     }
 
+    // Relasi ke data izin/cuti milik karyawan
+    public function leaves()
+    {
+        return $this->hasMany(Leave::class);
+    }
+
+    // Relasi ke jadwal shift milik karyawan
+    public function schedules()
+    {
+        return $this->hasMany(UserSchedule::class);
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

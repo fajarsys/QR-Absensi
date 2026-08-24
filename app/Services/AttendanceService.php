@@ -124,7 +124,7 @@ class AttendanceService
                 ->where('schedule_date', $tanggalHariIni)
                 ->first();
 
-            $catatanPulang = $absenHariIni->notes; // Pertahankan catatan saat masuk
+            $catatanPulang = $absenHariIni->notes;
             $pesanPulang = 'Berhasil Absen Pulang! Jarak: ' . round($distance) . ' meter. Hati-hati di jalan!';
 
             if ($jadwalHariIni) {
