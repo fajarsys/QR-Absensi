@@ -18,16 +18,15 @@ class AuthService
 
             // Fitur Kunci Perangkat hanya berlaku untuk karyawan (bukan admin)
             if ($role !== 'admin') {
-                // Jika di DB belum terkunci, buat UUID baru untuk dikunci
                 if (is_null($user->device_id)) {
-                    $newDeviceId = (string) Str::uuid();
-                    $user->device_id = $newDeviceId;
+                    // Karyawan baru: buat UUID baru dan kunci perangkat
+                    $user->device_id = (string) Str::uuid();
                     $user->user_agent = request()->userAgent();
                     $user->save();
-
-                    // Kirim token ini agar Controller tahu harus menanam cookie baru
-                    $deviceIdToCookie = $newDeviceId;
                 }
+
+                // SELALU tanam cookie setiap login (mencegah bug clear history)
+                $deviceIdToCookie = $user->device_id;
             }
 
             return [
