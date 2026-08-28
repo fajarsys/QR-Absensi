@@ -155,7 +155,7 @@
                     // Efek highlight menghilang perlahan
                     setTimeout(() => {
                         newItem.classList.remove('shadow-sm', 'bg-light', 'border', 'border-primary', 'p-2');
-                    }, 3000);
+                    }, 5000);
                 });
         }
     });

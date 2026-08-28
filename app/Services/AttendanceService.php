@@ -96,7 +96,7 @@ class AttendanceService
             ->whereDate('date', $hariIni)
             ->first();
 
-        // PINTU 3: Sudah Masuk & Pulang
+        // Sudah Masuk & Pulang
         if ($absenHariIni && $absenHariIni->clock_out != null) {
             return [
                 'status' => 'error',
@@ -115,7 +115,7 @@ class AttendanceService
             }
         }
 
-        // PINTU 2: Sudah Masuk, Tinggal Pulang
+        // Sudah Masuk, Tinggal Pulang
         if ($absenHariIni && $absenHariIni->clock_out == null) {
             // Ambil jadwal hari ini untuk pengecekan jam pulang
             $tanggalHariIni = $hariIni->format('Y-m-d');
@@ -169,7 +169,7 @@ class AttendanceService
             ];
         }
 
-        // PINTU 1: Proses Absen Masuk
+        // Proses Absen Masuk
         $tanggalHariIni = $hariIni->format('Y-m-d');
 
         // Blokir Masuk di Hari Libur / Tanggal Merah
@@ -198,7 +198,7 @@ class AttendanceService
             ];
         }
 
-        // Logika Keterlambatan
+        // Keterlambatan
         $jamMasuk = Carbon::parse($jadwalHariIni->schedule->start_time);
         $batasWaktu = $jamMasuk->copy()->addMinutes($jadwalHariIni->schedule->late_tolerance);
 
