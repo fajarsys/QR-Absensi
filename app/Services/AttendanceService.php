@@ -104,7 +104,8 @@ class AttendanceService
                 'redirect' => 'dashboard'
             ];
         } else if ($absenHariIni && $absenHariIni->clock_out == null) {
-            $selisihMenit = $waktuScan->diffInMinutes($absenHariIni->clock_in);
+            $clockInTime = Carbon::parse($absenHariIni->date . ' ' . $absenHariIni->clock_in);
+            $selisihMenit = $clockInTime->diffInMinutes($waktuScan, false);
             if ($selisihMenit < 15) {
                 $sisaWaktu = 15 - $selisihMenit;
                 return [
