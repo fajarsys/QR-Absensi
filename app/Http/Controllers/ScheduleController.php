@@ -54,14 +54,31 @@ class ScheduleController extends Controller
         return redirect()->back()->with('success', 'Seluruh jadwal semua karyawan pada bulan tersebut berhasil dihapus.');
     }
 
-    public function importExcel(ImportScheduleRequest $request, ScheduleService $service)
+    public function importExcel(ImportScheduleRequest $request)
     {
         try {
-            // Mengambil file dari request untuk dilempar ke service
-            $service->importExcel($request->file('file_excel'));
-            return redirect()->back()->with('success', 'Beberapa jadwal berhasil di-import!');
+            $import = new \App\Imports\UserScheduleImport;
+            \Maatwebsite\Excel\Facades\Excel::import($import, $request->file('file_excel'));
+
+            // Tidak ada baris yang berhasil sama sekali
+            if ($import->berhasil === 0 && $import->gagal === 0) {
+                return redirect()->back()->with('error', 'File kosong atau format kolom tidak sesuai. Pastikan kolom: A (Nama Karyawan), B (Nama Shift), C (Tanggal).');
+            }
+
+            if ($import->berhasil === 0 && $import->gagal > 0) {
+                $detail = implode(' | ', array_slice($import->barisGagal, 0, 5));
+                return redirect()->back()->with('error', "Tidak ada data yang berhasil di-import. {$import->gagal} baris gagal: {$detail}");
+            }
+
+            $pesan = "{$import->berhasil} jadwal berhasil di-import!";
+            if ($import->gagal > 0) {
+                $detail = implode(' | ', array_slice($import->barisGagal, 0, 5));
+                $pesan .= " ({$import->gagal} baris dilewati: {$detail})";
+            }
+
+            return redirect()->back()->with('success', $pesan);
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal meng-import data. Pastikan format Excel sudah benar. Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal meng-import data. Pastikan format file sudah benar. Error: ' . $e->getMessage());
         }
     }
 }

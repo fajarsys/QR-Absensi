@@ -16,6 +16,18 @@
     </div>
 @endif
 
+@if ($errors->any())
+    <div class="alert alert-danger alert-dismissible fade show mb-4 shadow-sm" style="border-radius: 10px;" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
 <div class="card border-0 shadow-sm mb-4" style="border-radius: 15px;">
     <div class="card-body p-4">
         
@@ -43,7 +55,7 @@
                 </button>
             </div>
             <div class="form-text text-muted mt-2">
-                *Format kolom: A (ID Karyawan), B (ID Shift), C (Tanggal format YYYY-MM-DD). Mulai data dari baris ke-2.
+                *Format kolom: A (Nama Karyawan), B (Nama Shift), C (Tanggal format YYYY-MM-DD). Mulai data dari baris ke-2.
             </div>
         </form>
     </div>

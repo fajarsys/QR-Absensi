@@ -27,7 +27,7 @@ class StoreLeaveRequest extends FormRequest
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'reason' => 'required|string',
-            'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5048'
+            'attachment' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5048'
         ];
     }
 }
