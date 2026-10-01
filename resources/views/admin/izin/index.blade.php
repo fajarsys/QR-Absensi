@@ -3,7 +3,7 @@
 @section('content')
 <div class="card border-0 shadow-sm mb-4" style="border-radius: 15px;">
     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom-0" style="border-radius: 15px 15px 0 0;">
-        <h6 class="fw-bold text-primary mb-0"><i class="bi bi-list-check"></i> Kelola Pengajuan Karyawan</h6>
+        <h6 class="fw-bold text-primary mb-0"><i class="bi bi-list-check"></i> Kelola Pengajuan Dosen</h6>
     </div>
 
     <!-- TABS NAVIGATION -->
@@ -21,23 +21,23 @@
     </ul>
 
     <div class="card-body p-0">
-        
+
         @if (session('success'))
-            <div class="alert alert-success m-3 alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+        <div class="alert alert-success m-3 alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
         @endif
 
         <div class="tab-content" id="pengajuanTabContent">
-            
+
             <!-- ==================== TAB IZIN & SAKIT ==================== -->
             <div class="tab-pane fade show active" id="izin" role="tabpanel">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="ps-4">Karyawan</th>
+                                <th class="ps-4">Dosen</th>
                                 <th>Jenis</th>
                                 <th>Tanggal</th>
                                 <th>Alasan</th>
@@ -64,44 +64,44 @@
                                 <td><small>{{ Str::limit($leave->reason, 30) }}</small></td>
                                 <td>
                                     @if($leave->attachment)
-                                        <a href="{{ asset('storage/' . $leave->attachment) }}" target="_blank" class="btn btn-sm btn-outline-info">
-                                            <i class="bi bi-file-earmark-text"></i> Lihat
-                                        </a>
+                                    <a href="{{ asset('storage/' . $leave->attachment) }}" target="_blank" class="btn btn-sm btn-outline-info">
+                                        <i class="bi bi-file-earmark-text"></i> Lihat
+                                    </a>
                                     @else
-                                        <span class="text-muted small">-</span>
+                                    <span class="text-muted small">-</span>
                                     @endif
                                 </td>
                                 <td>
                                     @if($leave->status == 'pending')
-                                        <span class="badge bg-secondary">Menunggu</span>
+                                    <span class="badge bg-secondary">Menunggu</span>
                                     @elseif($leave->status == 'approved')
-                                        <span class="badge bg-success">Disetujui</span>
+                                    <span class="badge bg-success">Disetujui</span>
                                     @else
-                                        <span class="badge bg-danger">Ditolak</span>
+                                    <span class="badge bg-danger">Ditolak</span>
                                     @endif
                                 </td>
                                 <td class="text-center pe-4">
                                     <div class="d-flex justify-content-center gap-2 align-items-center">
                                         @if($leave->status == 'pending')
-                                            <form action="{{ route('admin.izin.approve', $leave->id) }}" method="POST">
-                                                @csrf
-                                                <input type="hidden" name="status" value="approved">
-                                                <button type="submit" class="btn btn-sm btn-success" title="Setujui" onclick="return confirm('Setujui pengajuan ini dan masukkan ke data absensi?')">
-                                                    <i class="bi bi-check-lg"></i>
-                                                </button>
-                                            </form>
-        
-                                            <form action="{{ route('admin.izin.approve', $leave->id) }}" method="POST">
-                                                @csrf
-                                                <input type="hidden" name="status" value="rejected">
-                                                <button type="submit" class="btn btn-sm btn-danger" title="Tolak" onclick="return confirm('Tolak pengajuan ini?')">
-                                                    <i class="bi bi-x-lg"></i>
-                                                </button>
-                                            </form>
+                                        <form action="{{ route('admin.izin.approve', $leave->id) }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="status" value="approved">
+                                            <button type="submit" class="btn btn-sm btn-success" title="Setujui" onclick="return confirm('Setujui pengajuan ini dan masukkan ke data absensi?')">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                        </form>
+
+                                        <form action="{{ route('admin.izin.approve', $leave->id) }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="status" value="rejected">
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Tolak" onclick="return confirm('Tolak pengajuan ini?')">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </form>
                                         @else
-                                            <i class="bi bi-lock text-muted me-1" title="Sudah diproses"></i>
+                                        <i class="bi bi-lock text-muted me-1" title="Sudah diproses"></i>
                                         @endif
-        
+
                                         <form action="{{ route('admin.izin.destroy', $leave->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
@@ -128,7 +128,7 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="ps-4">Karyawan</th>
+                                <th class="ps-4">Dosen</th>
                                 <th>Tanggal</th>
                                 <th>Jam Lembur</th>
                                 <th>Keterangan</th>
@@ -151,35 +151,35 @@
                                 <td><small>{{ $lembur->durasi_menit }} menit</small></td>
                                 <td>
                                     @if($lembur->status == 'pending')
-                                        <span class="badge bg-secondary">Menunggu</span>
+                                    <span class="badge bg-secondary">Menunggu</span>
                                     @elseif($lembur->status == 'approved')
-                                        <span class="badge bg-success">Disetujui</span>
+                                    <span class="badge bg-success">Disetujui</span>
                                     @else
-                                        <span class="badge bg-danger">Ditolak</span>
+                                    <span class="badge bg-danger">Ditolak</span>
                                     @endif
                                 </td>
                                 <td class="text-center pe-4">
                                     <div class="d-flex justify-content-center gap-2 align-items-center">
                                         @if($lembur->status == 'pending')
-                                            <form action="{{ route('admin.lembur.approve', $lembur->id) }}" method="POST">
-                                                @csrf
-                                                <input type="hidden" name="status" value="approved">
-                                                <button type="submit" class="btn btn-sm btn-success" title="Setujui" onclick="return confirm('Setujui pengajuan lembur ini?')">
-                                                    <i class="bi bi-check-lg"></i>
-                                                </button>
-                                            </form>
-        
-                                            <form action="{{ route('admin.lembur.approve', $lembur->id) }}" method="POST">
-                                                @csrf
-                                                <input type="hidden" name="status" value="rejected">
-                                                <button type="submit" class="btn btn-sm btn-danger" title="Tolak" onclick="return confirm('Tolak pengajuan lembur ini?')">
-                                                    <i class="bi bi-x-lg"></i>
-                                                </button>
-                                            </form>
+                                        <form action="{{ route('admin.lembur.approve', $lembur->id) }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="status" value="approved">
+                                            <button type="submit" class="btn btn-sm btn-success" title="Setujui" onclick="return confirm('Setujui pengajuan lembur ini?')">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                        </form>
+
+                                        <form action="{{ route('admin.lembur.approve', $lembur->id) }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="status" value="rejected">
+                                            <button type="submit" class="btn btn-sm btn-danger" title="Tolak" onclick="return confirm('Tolak pengajuan lembur ini?')">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </form>
                                         @else
-                                            <i class="bi bi-lock text-muted me-1" title="Sudah diproses"></i>
+                                        <i class="bi bi-lock text-muted me-1" title="Sudah diproses"></i>
                                         @endif
-        
+
                                         <form action="{{ route('admin.lembur.destroy', $lembur->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
@@ -212,7 +212,7 @@
         // 1. LISTENER IZIN BARU
         .listen('.izin.baru', (data) => {
             const tbody = document.getElementById('tabel-data-izin');
-            
+
             if (tbody) {
                 const barisKosong = tbody.querySelector('td[colspan="7"]');
                 if (barisKosong) barisKosong.closest('tr').remove();
@@ -275,7 +275,7 @@
         // 2. LISTENER LEMBUR BARU
         .listen('.lembur.baru', (data) => {
             const tbody = document.getElementById('tabel-data-lembur');
-            
+
             if (tbody) {
                 const barisKosong = tbody.querySelector('td[colspan="7"]');
                 if (barisKosong) barisKosong.closest('tr').remove();

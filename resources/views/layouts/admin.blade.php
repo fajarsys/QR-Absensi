@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -12,8 +13,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v={{ filemtime(public_path('css/admin.css')) }}">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    @vite(['resources/css/app.css', 'resources/js/app.js']) 
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
+
 <body>
 
     <nav id="sidebar" class="p-3">
@@ -29,13 +31,13 @@
             </li>
             <li class="nav-item">
                 <a href="{{route('admin.users.adminIndex')}}" class="nav-link {{ request()->routeIs('admin.users.adminIndex') ? 'active' : '' }}">
-                    <i class="bi bi-people-fill me-2"></i> Data Karyawan
+                    <i class="bi bi-people-fill me-2"></i> Data Dosen
                 </a>
             </li>
-            
+
             <li class="nav-item">
                 <a href="{{ route('admin.schedule') }}" class="nav-link {{ request()->routeIs('admin.schedule') ? 'active' : '' }}">
-                    <i class="bi bi-calendar-minus-fill"></i> Jadwal Karyawan
+                    <i class="bi bi-calendar-minus-fill"></i> Jadwal Dosen
                 </a>
             </li>
             <li class="nav-item">
@@ -57,9 +59,9 @@
                 <a href="{{route ('admin.izin.adminIndex') }}" class="nav-link nav-link {{ request()->routeIs('admin.izin.adminIndex') ? 'active' : '' }}">
                     <i class="bi bi-union"></i> Kelola Pengajuan
                 </a>
-            </li>     
+            </li>
         </ul>
-        
+
         <div class="mt-auto pt-5">
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
@@ -99,7 +101,7 @@
                     audioFile.currentTime = 0;
                     audioFile.volume = 1; // Kembalikan volume normal
                     isAudioAllowed = true; // Audio berhasil diizinkan
-                    
+
                     // Hapus event listener agar fungsi ini tidak dieksekusi lagi pada klik berikutnya
                     document.removeEventListener('click', unlockAudio);
                     document.removeEventListener('keydown', unlockAudio);
@@ -117,7 +119,7 @@
                 const newNotif = document.createElement('div');
                 newNotif.className = 'alert alert-info alert-dismissible fade show shadow-sm border-start border-4 border-info mb-0';
                 newNotif.style = 'min-width: 300px;';
-                
+
                 newNotif.innerHTML = `
                     <div class="d-flex align-items-center">
                         <i class="bi bi-info-circle-fill me-3 fs-4"></i>
@@ -136,12 +138,12 @@
                     audioFile.cloneNode().play().catch(e => console.warn("Audio diblokir:", e));
                 }
             })
-        // 5. Listener Lembur Reverb
+            // 5. Listener Lembur Reverb
             .listen('.lembur.baru', (data) => {
                 const newNotif = document.createElement('div');
                 newNotif.className = 'alert alert-warning alert-dismissible fade show shadow-sm border-start border-4 border-warning mb-0';
                 newNotif.style = 'min-width: 300px;';
-                
+
                 newNotif.innerHTML = `
                     <div class="d-flex align-items-center">
                         <i class="bi bi-clock-history me-3 fs-4"></i>
@@ -162,4 +164,5 @@
             });
     </script>
 </body>
+
 </html>

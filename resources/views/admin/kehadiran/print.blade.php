@@ -20,7 +20,7 @@
         <div class="row mb-3" style="font-size: 15px;">
             <div class="col-6">
                 <table>
-                    <tr style="border: none;"><td style="border: none; text-align: left; padding: 2px; width: 120px;">Nama</td><td style="border: none; text-align: left; padding: 2px;">: <strong>{{ $user->name }}</strong></td></tr>
+                    <tr style="border: none;"><td style="border: none; text-align: left; padding: 2px; width: 120px;">Nama Dosen</td><td style="border: none; text-align: left; padding: 2px;">: <strong>{{ $user->name }}</strong></td></tr>
                     <tr style="border: none;"><td style="border: none; text-align: left; padding: 2px;">Jabatan</td><td style="border: none; text-align: left; padding: 2px;">: {{ $user->jabatan }}</td></tr>
                 </table>
             </div>

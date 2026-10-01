@@ -38,7 +38,7 @@
                                 <i class="bi bi-people-fill fs-5"></i>
                             </div>
                         </div>
-                        <h6 class="text-muted fw-semibold mb-1">Total Karyawan</h6>
+                        <h6 class="text-muted fw-semibold mb-1">Total Dosen</h6>
                         <h2 class="fw-bold mb-0 text-dark">{{ \App\Models\User::count() }}</h2>
                     </div>
                 </div>

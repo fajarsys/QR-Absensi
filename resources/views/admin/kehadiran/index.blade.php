@@ -37,7 +37,7 @@
     <table class="table table-hover align-middle border">
         <thead class="table-light">
             <tr>
-                <th class="ps-3">Nama Karyawan</th>
+                <th class="ps-3">Nama Dosen</th>
                 <th>Tanggal</th>
                 <th>Jam Masuk</th>
                 <th>Jam Pulang</th>

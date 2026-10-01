@@ -3,7 +3,7 @@
 @section('content')
 <div class="card border-0 shadow-sm" style="border-radius: 15px;">
     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center" style="border-radius: 15px 15px 0 0;">
-        <h6 class="fw-bold text-primary mb-0"><i class="bi bi-pencil-square"></i> Edit Jadwal Karyawan</h6>
+        <h6 class="fw-bold text-primary mb-0"><i class="bi bi-pencil-square"></i> Edit Jadwal</h6>
         <a href="{{ route('admin.schedule') }}" class="btn btn-sm btn-secondary fw-bold" style="border-radius: 8px;">
             <i class="bi bi-arrow-left"></i> Kembali
         </a>
@@ -26,7 +26,7 @@
             @method('PUT')
             
             <div class="mb-4">
-                <label class="form-label fw-bold text-secondary">Nama Karyawan</label>
+                <label class="form-label fw-bold text-secondary">Nama Dosen</label>
                 <input type="text" class="form-control bg-light" value="{{ $userSchedule->user->name }}" readonly>
                 <div class="form-text text-muted">*Nama karyawan tidak dapat diubah pada mode edit. Hapus jadwal jika salah orang.</div>
             </div>
