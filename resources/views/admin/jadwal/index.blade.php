@@ -32,7 +32,7 @@
     <div class="card-body p-4">
 
         <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
-            <h5 class="fw-bold text-primary mb-0"><i class="bi bi-calendar-plus"></i> Kelola Jadwal Karyawan</h5>
+            <h5 class="fw-bold text-primary mb-0"><i class="bi bi-calendar-plus"></i> Kelola Jadwal Dosen</h5>
 
             <div class="d-flex gap-2">
                 <button type="button" class="btn btn-sm btn-danger shadow-sm" data-bs-toggle="modal" data-bs-target="#modalHapusBulanan">
@@ -55,7 +55,7 @@
                 </button>
             </div>
             <div class="form-text text-muted mt-2">
-                *Format kolom: A (Nama Karyawan), B (Nama Shift), C (Tanggal format YYYY-MM-DD). Mulai data dari baris ke-2.
+                *Format kolom: A (Nama Dosen), B (Nama Shift), C (Tanggal format YYYY-MM-DD). Mulai data dari baris ke-2.
             </div>
         </form>
     </div>
@@ -73,7 +73,7 @@
                 @csrf
                 <div class="modal-body p-4">
                     <div class="mb-3">
-                        <label class="form-label fw-bold text-secondary">Pilih Karyawan</label>
+                        <label class="form-label fw-bold text-secondary">Pilih Dosen</label>
                         <select name="user_id" class="form-select" required>
                             <option value="">-- Pilih Dosen --</option>
                             @foreach($users as $user)
@@ -83,9 +83,9 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold text-secondary">Pilih Shift</label>
+                        <label class="form-label fw-bold text-secondary">Pilih Kelas</label>
                         <select name="schedule_id" class="form-select" required>
-                            <option value="">-- Pilih Shift --</option>
+                            <option value="">-- Pilih Kelas --</option>
                             @foreach($schedules as $shift)
                             <option value="{{ $shift->id }}">{{ $shift->name ?? 'Shift ID: '.$shift->id }}</option>
                             @endforeach
@@ -153,7 +153,7 @@
 
 
 <div class="mt-4">
-    <h6 class="fw-bold mb-3 text-secondary"><i class="bi bi-card-checklist"></i> Klasifikasi Jadwal Karyawan</h6>
+    <h6 class="fw-bold mb-3 text-secondary"><i class="bi bi-card-checklist"></i> Klasifikasi Jadwal Dosen</h6>
 
     <div class="row">
         @forelse ($userSchedules->groupBy('user_id') as $userId => $jadwals)

@@ -28,7 +28,7 @@
             <div class="mb-4">
                 <label class="form-label fw-bold text-secondary">Nama Dosen</label>
                 <input type="text" class="form-control bg-light" value="{{ $userSchedule->user->name }}" readonly>
-                <div class="form-text text-muted">*Nama karyawan tidak dapat diubah pada mode edit. Hapus jadwal jika salah orang.</div>
+                <div class="form-text text-muted">*Nama Dosen tidak dapat diubah pada mode edit. Hapus jadwal jika salah orang.</div>
             </div>
 
             <div class="mb-4">
