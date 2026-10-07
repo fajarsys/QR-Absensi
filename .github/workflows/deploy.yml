@@ -1,36 +1,48 @@
-name: Deploy to Proxmox
+name: Deploy Absensi to K3s
 
 on:
   push:
     branches:
-      - main # Workflow berjalan setiap kali Anda melakukan push ke branch main
+      - main
 
 jobs:
-  deploy:
-    runs-on: self-hosted # Menginstruksikan GitHub untuk mengeksekusi ini di server Proxmox Anda
+  deploy_k3s:
+    runs-on: self-hosted
 
     steps:
       - name: 1. Tarik Pembaruan Kode
+        uses: actions/checkout@v4
+
+      - name: 2. Build Docker Image (Termasuk Composer & NPM)
         run: |
-          cd /opt/QR-Absensi
-          git pull https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/fajarsys/QR-Absensi.git main
+          # Pastikan Dockerfile Anda berisi instruksi RUN composer install dan RUN npm run build
+          docker build -t 10.0.0.101:5000/absensi-app:latest .
 
-      - name: 2. Perbaiki Hak Akses File
-        run: docker exec -u root absensi_app chown -R www-data:www-data /var/www/html
-
-      - name: 3. Instal Dependensi Composer (Backend)
-        run: docker exec absensi_app composer install --no-interaction --prefer-dist --optimize-autoloader
-
-      - name: 4. Kompilasi Aset Frontend
+      - name: 3. Push Image ke Local Registry
         run: |
-          cd /opt/QR-Absensi
-          npm install
-          npm run build
+          docker push 10.0.0.101:5000/absensi-app:latest
 
-      - name: 5. Eksekusi Migrasi Database
-        run: docker exec absensi_app php artisan migrate --force
-
-      - name: 6. Manajemen Cache & Restart WebSocket
+      - name: 4. Setup Akses K3s
         run: |
-          docker exec absensi_app php artisan optimize:clear
-          docker exec absensi_app php artisan reverb:restart
+          mkdir -p ~/.kube
+          # Pastikan Anda menggunakan nama secret yang sama dengan portfolio (KUBE_KONFIG)
+          echo "${{ secrets.KUBE_KONFIG }}" > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: 5. Rollout Pod Baru
+        run: |
+          # Memerintahkan K3s untuk menarik image terbaru dan merestart Pod
+          kubectl rollout restart deployment absensi-app
+          kubectl rollout restart deployment absensi-reverb
+          
+          # JEDA PENTING: Menunggu hingga Pod aplikasi utama benar-benar berstatus 'Running'
+          kubectl rollout status deployment/absensi-app
+
+      - name: 6. Migrasi Database & Clear Cache
+        run: |
+          # Mencari nama Pod absensi-app secara dinamis
+          POD_NAME=$(kubectl get pods -l app=absensi-app -o jsonpath="{.items[0].metadata.name}")
+          
+          # Eksekusi perintah artisan di dalam Pod yang baru menyala
+          kubectl exec $POD_NAME -- php artisan migrate --force
+          kubectl exec $POD_NAME -- php artisan optimize:clear
