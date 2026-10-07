@@ -44,5 +44,6 @@ jobs:
           POD_NAME=$(kubectl get pods -l app=absensi-app -o jsonpath="{.items[0].metadata.name}")
           
           # Eksekusi perintah artisan di dalam Pod yang baru menyala
-          kubectl exec $POD_NAME -- php artisan migrate --force
-          kubectl exec $POD_NAME -- php artisan optimize:clear
+          CONTAINER_NAME=$(kubectl get pods -l app=absensi-app -o jsonpath="{.items[0].spec.containers[0].name}")
+          kubectl exec $POD_NAME -c $CONTAINER_NAME -- php artisan migrate --force
+          kubectl exec $POD_NAME -c $CONTAINER_NAME -- php artisan optimize:clear
