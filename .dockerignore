@@ -1,0 +1,10 @@
+/vendor/
+/node_modules/
+/public/build/
+/.env
+/.git/
+/storage/logs/
+/storage/framework/sessions/
+/storage/framework/views/
+/storage/framework/cache/
+/bootstrap/cache/

@@ -19,6 +19,7 @@ COPY --chown=www-data:www-data . .
 
 # Finalisasi composer (autoload + package discovery)
 RUN composer dump-autoload --optimize
+RUN composer run-script post-autoload-dump
 
 # ---- Nilai build-time untuk frontend (Echo/Reverb) ----
 # Ini publik (ikut terkirim ke browser). JANGAN masukkan REVERB_APP_SECRET di sini.
