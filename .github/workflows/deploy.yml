@@ -16,7 +16,7 @@ jobs:
       - name: 2. Build Docker Image (Termasuk Composer & NPM)
         run: |
           # Pastikan Dockerfile Anda berisi instruksi RUN composer install dan RUN npm run build
-          docker build -t 10.0.0.101:5000/absensi-app:latest .
+          docker build --build-arg VITE_REVERB_APP_KEY=zycv2vod14uvuds81ncq -t 10.0.0.101:5000/absensi-app:latest .
 
       - name: 3. Push Image ke Local Registry
         run: |
