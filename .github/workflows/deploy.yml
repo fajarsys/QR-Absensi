@@ -33,8 +33,8 @@ jobs:
         run: |
           kubectl rollout restart deployment absensi-app
           kubectl rollout restart deployment absensi-reverb
-          kubectl rollout status deployment/absensi-app --timeout=180s
-          kubectl rollout status deployment/absensi-reverb --timeout=180s
+          kubectl rollout status deployment/absensi-app --timeout=12m
+          kubectl rollout status deployment/absensi-reverb --timeout=12m
 
       - name: 6. Migrasi Database & Clear Cache
         run: |
