@@ -53,12 +53,22 @@ class AttendanceService
 
         // Pengecekan Validitas QR Code Dinamis
         $secret = config('app.qr_secret');
-        $currentWindow = floor(time() / 15);
+        $currentWindow = floor(time() / config('attendance.qr_window'));
 
-        $validTokenCurrent = hash('sha256', $secret . $currentWindow);
-        $validTokenPrevious = hash('sha256', $secret . ($currentWindow - 1));
+        $user = \App\Models\User::find($userId);
+        if (!$user) {
+            return [
+                'status' => 'error',
+                'message' => 'Pengguna tidak ditemukan.',
+                'redirect' => 'back'
+            ];
+        }
 
-        if (!isset($data['qr_code']) || !in_array($data['qr_code'], [$validTokenCurrent, $validTokenPrevious])) {
+        $validTokenCurrent = hash_hmac('sha256', $currentWindow, $secret);
+        $validTokenPrevious = hash_hmac('sha256', ($currentWindow - 1), $secret);
+
+        if (!isset($data['qr_code']) ||
+                !(hash_equals($data['qr_code'], $validTokenCurrent) || hash_equals($data['qr_code'], $validTokenPrevious))) {
             return [
                 'status' => 'error',
                 'message' => 'Gagal absen! QR Code palsu atau sudah kedaluwarsa. Silakan scan ulang.',
@@ -106,8 +116,8 @@ class AttendanceService
         } else if ($absenHariIni && $absenHariIni->clock_out == null) {
             $clockInTime = Carbon::parse($absenHariIni->date . ' ' . $absenHariIni->clock_in);
             $selisihMenit = $clockInTime->diffInMinutes($waktuScan, false);
-            if ($selisihMenit < 15) {
-                $sisaWaktu = 15 - $selisihMenit;
+            if ($selisihMenit < config('attendance.early_arrival_threshold')) {
+                $sisaWaktu = config('attendance.early_arrival_threshold') - $selisihMenit;
                 return [
                     'status' => 'error',
                     'message' => "Anda baru saja merekam absen masuk. Silakan tunggu {$sisaWaktu} menit lagi untuk bisa absen pulang.",
@@ -133,7 +143,7 @@ class AttendanceService
 
                 // Aturan Khusus Hari Sabtu (Pulang jam 14:00)
                 if ($waktuScan->isSaturday()) {
-                    $jamPulangNormal = Carbon::parse('14:00:00');
+                    $jamPulangNormal = Carbon::parse(config('attendance.saturday_pullout_time'));
                 }
 
                 // Cek Pulang Cepat
@@ -154,14 +164,18 @@ class AttendanceService
                 'notes' => $catatanPulang
             ]);
 
-            broadcast(new ActivityLogged([
-                'id' => 'att_' . $absenHariIni->id,
-                'type' => 'attendance',
-                'user_name' => \App\Models\User::find($userId)->name,
-                'description' => 'Melakukan Absen Pulang',
-                'status' => 'Hadir',
-                'time' => now()->format('H:i')
-            ]));
+            try {
+                broadcast(new ActivityLogged([
+                    'id' => 'att_' . $absenHariIni->id,
+                    'type' => 'attendance',
+                    'user_name' => $user->name,
+                    'description' => 'Melakukan Absen Pulang',
+                    'status' => 'Hadir',
+                    'time' => now()->format('H:i')
+                ]));
+            } catch (\Exception $e) {
+                Log::error('Broadcast failed: ' . $e->getMessage());
+            }
 
             return [
                 'status' => 'success',
@@ -210,7 +224,7 @@ class AttendanceService
             $menitTelat = $jamMasuk->diffInMinutes($waktuScan);
             $notes = 'Terlambat ' . $menitTelat . ' menit';
             $pesanPemberitahuan = 'Berhasil Absen Masuk! Namun Anda terlambat ' . $menitTelat . ' menit.';
-        } elseif ($waktuScan->lessThan($jamMasuk->copy()->subMinutes(60))) {
+        } elseif ($waktuScan->lessThan($jamMasuk->copy()->subMinutes(config('attendance.early_arrival_threshold')))) {
             $menitLembur = $waktuScan->diffInMinutes($jamMasuk);
             $notes = 'Lembur Masuk: ' . $menitLembur . ' menit';
             $pesanPemberitahuan = 'Berhasil Absen Masuk! Anda datang ' . $menitLembur . ' menit lebih awal (Lembur).';
@@ -227,14 +241,18 @@ class AttendanceService
             'notes' => $notes
         ]);
 
-        broadcast(new ActivityLogged([
-            'id' => 'att_' . $absen->id, // Kita perlu variable $absen
-            'type' => 'attendance',
-            'user_name' => \App\Models\User::find($userId)->name,
-            'description' => 'Melakukan Absen Masuk',
-            'status' => 'Belum Pulang',
-            'time' => now()->format('H:i')
-        ]));
+        try {
+            broadcast(new ActivityLogged([
+                'id' => 'att_' . $absen->id, // Kita perlu variable $absen
+                'type' => 'attendance',
+                'user_name' => $user->name,
+                'description' => 'Melakukan Absen Masuk',
+                'status' => 'Belum Pulang',
+                'time' => now()->format('H:i')
+            ]));
+        } catch (\Exception $e) {
+            Log::error('Broadcast failed: ' . $e->getMessage());
+        }
 
         return [
             'status' => 'success',

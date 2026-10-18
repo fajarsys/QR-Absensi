@@ -24,8 +24,8 @@ class StoreAttendanceRequest extends FormRequest
     {
         return [
             'qr_code' => 'required|string',
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
         ];
     }
 }

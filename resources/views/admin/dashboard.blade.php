@@ -23,8 +23,8 @@
 </div>
 
 <div class="row g-4">
-    <!-- Kolom Kiri: Metrik Utama (70%) -->
-    <div class="col-lg-8">
+    <!-- Metrik Utama -->
+    <div class="col-12">
 
         <h5 class="fw-bold text-secondary mb-3">Rekapitulasi Absensi (Hari Ini)</h5>
 
@@ -38,7 +38,7 @@
                                 <i class="bi bi-people-fill fs-5"></i>
                             </div>
                         </div>
-                        <h6 class="text-muted fw-semibold mb-1">Total Dosen</h6>
+                        <h6 class="text-muted fw-semibold mb-1">Total Karyawan</h6>
                         <h2 class="fw-bold mb-0 text-dark">{{ \App\Models\User::count() }}</h2>
                     </div>
                 </div>
@@ -79,8 +79,8 @@
 
     </div>
 
-    <!-- Kolom Kanan: Real-Time Activity Log (30%) -->
-    <div class="col-lg-4">
+    <!-- Real-Time Activity Log -->
+    <div class="col-12">
         <div class="card border-0 shadow-sm rounded-4 h-100">
             <div class="card-header bg-white border-bottom-0 pt-4 pb-0 d-flex justify-content-between align-items-center">
                 <h6 class="fw-bold mb-0">Real-Time Activity Log</h6>

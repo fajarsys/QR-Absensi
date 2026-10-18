@@ -1,34 +1,46 @@
 FROM serversideup/php:8.4-fpm-nginx
 
 USER root
-# Instal dependensi sistem
-RUN install-php-extensions gd
-RUN apk add --no-cache nodejs npm || (apt-get update && apt-get install -y nodejs npm)
+RUN install-php-extensions gd \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends nodejs npm \
+    && rm -rf /var/lib/apt/lists/*
 
-# ---- Dependensi PHP (layer ter-cache selama composer.json/lock tidak berubah) ----
+# Script pembuat folder storage saat container start
+COPY docker/entrypoint.d/10-storage-dirs.sh /etc/entrypoint.d/10-storage-dirs.sh
+RUN chmod +x /etc/entrypoint.d/10-storage-dirs.sh
+
+# ---- Dependensi PHP (layer ter-cache) ----
 COPY --chown=www-data:www-data composer.json composer.lock ./
 USER www-data
-RUN composer install --no-interaction --prefer-dist --no-scripts --no-autoloader
+RUN composer install --no-interaction --prefer-dist --no-dev \
+    --no-scripts --no-autoloader
 
-# ---- Dependensi Node (layer ter-cache selama package.json/lock tidak berubah) ----
+# ---- Dependensi Node (layer ter-cache) ----
 COPY --chown=www-data:www-data package.json package-lock.json* ./
-RUN npm install
+RUN npm ci
 
 # ---- Kode aplikasi ----
 COPY --chown=www-data:www-data . .
 
-# Finalisasi composer (autoload + package discovery)
-RUN composer dump-autoload --optimize
-RUN composer run-script post-autoload-dump
+# Jaring pengaman saat build
+RUN mkdir -p bootstrap/cache \
+        storage/logs \
+        storage/framework/cache \
+        storage/framework/sessions \
+        storage/framework/views \
+    && chmod -R ug+rwX bootstrap/cache storage
 
-# ---- Nilai build-time untuk frontend (Echo/Reverb) ----
-# Ini publik (ikut terkirim ke browser). JANGAN masukkan REVERB_APP_SECRET di sini.
+# Autoload + package:discover (sudah otomatis menjalankan post-autoload-dump)
+RUN composer dump-autoload --optimize --no-dev
+
+# ---- Nilai build-time frontend (publik, ikut ke browser) ----
+# JANGAN masukkan REVERB_APP_SECRET di sini.
 ARG VITE_REVERB_APP_KEY
 ARG VITE_REVERB_HOST=absensimercusuar.biz.id
 ARG VITE_REVERB_PORT=443
 ARG VITE_REVERB_SCHEME=https
 
-# Fail cepat kalau lupa kirim build-arg, daripada baru ketahuan di browser
 RUN test -n "$VITE_REVERB_APP_KEY" || (echo "ERROR: VITE_REVERB_APP_KEY kosong. Pakai --build-arg VITE_REVERB_APP_KEY=..." && exit 1)
 
-RUN npm run build
+RUN npm run build && rm -rf node_modules

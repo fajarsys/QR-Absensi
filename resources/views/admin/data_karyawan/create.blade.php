@@ -44,7 +44,7 @@
 
                 <div class="col-md-6 mb-3">
                     <label class="form-label fw-bold text-secondary">Jabatan</label>
-                    <input type="text" name="jabatan" class="form-control" value="{{ old('jabatan') }}" placeholder="Contoh: Staff IT, Dosen, dll" required>
+                    <input type="text" name="jabatan" class="form-control" value="{{ old('jabatan') }}" placeholder="Contoh: Staff IT, Supervisor, dll" required>
                 </div>
             </div>
 

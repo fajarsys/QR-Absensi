@@ -31,13 +31,13 @@
             </li>
             <li class="nav-item">
                 <a href="{{route('admin.users.adminIndex')}}" class="nav-link {{ request()->routeIs('admin.users.adminIndex') ? 'active' : '' }}">
-                    <i class="bi bi-people-fill me-2"></i> Data Dosen
+                    <i class="bi bi-people-fill me-2"></i> Data Karyawan
                 </a>
             </li>
 
             <li class="nav-item">
                 <a href="{{ route('admin.schedule') }}" class="nav-link {{ request()->routeIs('admin.schedule') ? 'active' : '' }}">
-                    <i class="bi bi-calendar-minus-fill"></i> Jadwal Dosen
+                    <i class="bi bi-calendar-minus-fill"></i> Jadwal Karyawan
                 </a>
             </li>
             <li class="nav-item">

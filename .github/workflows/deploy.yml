@@ -31,19 +31,22 @@ jobs:
 
       - name: 5. Rollout Pod Baru
         run: |
-          # Memerintahkan K3s untuk menarik image terbaru dan merestart Pod
           kubectl rollout restart deployment absensi-app
           kubectl rollout restart deployment absensi-reverb
-          
-          # JEDA PENTING: Menunggu hingga Pod aplikasi utama benar-benar berstatus 'Running'
-          kubectl rollout status deployment/absensi-app
+          kubectl rollout status deployment/absensi-app --timeout=180s
+          kubectl rollout status deployment/absensi-reverb --timeout=180s
 
       - name: 6. Migrasi Database & Clear Cache
         run: |
           # Mencari nama Pod absensi-app secara dinamis
-          POD_NAME=$(kubectl get pods -l app=absensi-app -o jsonpath="{.items[0].metadata.name}")
-          
-          # Eksekusi perintah artisan di dalam Pod yang baru menyala
-          CONTAINER_NAME=$(kubectl get pods -l app=absensi-app -o jsonpath="{.items[0].spec.containers[0].name}")
-          kubectl exec $POD_NAME -c $CONTAINER_NAME -- php artisan migrate --force
-          kubectl exec $POD_NAME -c $CONTAINER_NAME -- php artisan optimize:clear
+          POD_NAME=$(kubectl get pods -l app=absensi-app \
+            --field-selector=status.phase=Running \
+            --sort-by=.metadata.creationTimestamp \
+            -o jsonpath='{.items[-1:].metadata.name}')
+
+          CONTAINER_NAME=$(kubectl get pod "$POD_NAME" \
+            -o jsonpath='{.spec.containers[0].name}')
+
+          echo "Migrasi di pod: $POD_NAME ($CONTAINER_NAME)"
+          kubectl exec "$POD_NAME" -c "$CONTAINER_NAME" -- php artisan migrate --force
+          kubectl exec "$POD_NAME" -c "$CONTAINER_NAME" -- php artisan optimize:clear

@@ -3,9 +3,9 @@
 @section('content')
 <div class="card border-0 shadow-sm mb-4" style="border-radius: 15px;">
     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center" style="border-radius: 15px 15px 0 0;">
-        <h6 class="fw-bold text-primary mb-0"><i class="bi bi-people"></i> Manajemen Dosen</h6>
+        <h6 class="fw-bold text-primary mb-0"><i class="bi bi-people"></i> Manajemen Karyawan</h6>
         <a href="{{ route('admin.users.adminCreate') }}" class="btn btn-sm btn-primary fw-bold" style="border-radius: 8px;">
-            <i class="bi bi-person-plus"></i> Tambah Dosen
+            <i class="bi bi-person-plus"></i> Tambah Karyawan
         </a>
     </div>
 
@@ -55,7 +55,7 @@
                                 </a>
 
                                 @if ($user->id !== \Illuminate\Support\Facades\Auth::id())
-                                <form action="{{ route('admin.users.adminDestroy', $user->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data Dosen ini? Semua data absensi terkait juga akan ikut terhapus.')">
+                                <form action="{{ route('admin.users.adminDestroy', $user->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data karyawan ini? Semua data absensi terkait juga akan ikut terhapus.')">
                                     @csrf
                                      @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">

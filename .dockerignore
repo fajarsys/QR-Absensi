@@ -1,10 +1,20 @@
 /vendor/
 /node_modules/
 /public/build/
-/.env
+/public/hot
 /.git/
-/storage/logs/
-/storage/framework/sessions/
-/storage/framework/views/
-/storage/framework/cache/
-/bootstrap/cache/
+/.env
+/.env.*
+!/.env.example
+
+# Kecualikan isinya saja, pertahankan foldernya lewat .gitignore
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
+/storage/logs/*
+!/storage/logs/.gitignore
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+/storage/framework/cache/*
+!/storage/framework/cache/.gitignore

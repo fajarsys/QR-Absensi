@@ -3,7 +3,7 @@
 @section('content')
 <div class="card border-0 shadow-sm mb-4" style="border-radius: 15px;">
     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom-0" style="border-radius: 15px 15px 0 0;">
-        <h6 class="fw-bold text-primary mb-0"><i class="bi bi-list-check"></i> Kelola Pengajuan Dosen</h6>
+        <h6 class="fw-bold text-primary mb-0"><i class="bi bi-list-check"></i> Kelola Pengajuan Karyawan</h6>
     </div>
 
     <!-- TABS NAVIGATION -->
@@ -37,7 +37,7 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="ps-4">Dosen</th>
+                                <th class="ps-4">Karyawan</th>
                                 <th>Jenis</th>
                                 <th>Tanggal</th>
                                 <th>Alasan</th>
@@ -128,7 +128,7 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="ps-4">Dosen</th>
+                                <th class="ps-4">Karyawan</th>
                                 <th>Tanggal</th>
                                 <th>Jam Lembur</th>
                                 <th>Keterangan</th>
